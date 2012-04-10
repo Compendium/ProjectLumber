@@ -18,6 +18,10 @@ import static org.lwjgl.opengl.GL20.*;
 import oz.wizards.lumber.math.Vec2;
 import oz.wizards.lumber.math.Vec3;
 
+/**
+ * A vertex batch, that uses vertex arrays to draw
+ * @author compendium
+ */
 public class Vertexbatch {
 	public Vec3 translation = new Vec3();
 	public Vec3 rotation = new Vec3();
@@ -45,48 +49,53 @@ public class Vertexbatch {
 	
 	/**
 	 * Adds a quad (2 Triangles / 6 Vertices) to the rendering queue for later rendering with end()
-	 * @param texid The (gl-) id of the texture to use. TODO has no use currently
+	 * @param tex The texture to use for drawing, can be null(TODO)
 	 * @param a Upper Left
 	 * @param b Lower Left
 	 * @param c Upper Right
 	 * @param d Lower Right
+	 * @param uvmin The upper left texture coordinate in pixels
+	 * @param uvmax The lower right texture coordinate in pixels
 	 * @param rgb The tinting color
 	 */
-	public void putQuad (int texid, Vec3 a, Vec3 b, Vec3 c, Vec3 d, Vec2 uvmin, Vec2 uvmax, Vec3 rgb)
+	public void putQuad (Texture tex, Vec3 a, Vec3 b, Vec3 c, Vec3 d, Vec2 uvmin, Vec2 uvmax, Vec3 rgb)
 	{
-		if(mVertexMap.containsKey(texid) == false)
+		if(mVertexMap.containsKey(tex.texId) == false)
 		{
 			TextureInfo ti = new TextureInfo();
-			ti.texId = texid;
+			ti.texId = tex.texId;
 			//TODO add allocate-size for texture uv
 			ti.vertices = ByteBuffer.allocateDirect((3 * FLOAT_SIZE_BYTES + 3 * FLOAT_SIZE_BYTES + 2 * FLOAT_SIZE_BYTES) * 6 * 1).order(ByteOrder.nativeOrder()).asFloatBuffer();
 			ti.vertexCount = 0;
 			ti.maxQuads = 1;
-			mVertexMap.put(texid, ti);
+			mVertexMap.put(tex.texId, ti);
 		}
 		
-		if(mVertexMap.get(texid).vertexCount / 6 >= mVertexMap.get(texid).maxQuads)
+		if(mVertexMap.get(tex.texId).vertexCount / 6 >= mVertexMap.get(tex.texId).maxQuads)
 		{
-			mVertexMap.get(texid).maxQuads *= 2;
-			FloatBuffer currentBuffer = mVertexMap.get(texid).vertices;
-			FloatBuffer newbuffer = ByteBuffer.allocateDirect((3*FLOAT_SIZE_BYTES + 3 * FLOAT_SIZE_BYTES + 2 * FLOAT_SIZE_BYTES) * 6 * mVertexMap.get(texid).maxQuads).order(ByteOrder.nativeOrder()).asFloatBuffer();
+			mVertexMap.get(tex.texId).maxQuads *= 2;
+			FloatBuffer currentBuffer = mVertexMap.get(tex.texId).vertices;
+			FloatBuffer newbuffer = ByteBuffer.allocateDirect((3*FLOAT_SIZE_BYTES + 3 * FLOAT_SIZE_BYTES + 2 * FLOAT_SIZE_BYTES) * 6 * mVertexMap.get(tex.texId).maxQuads).order(ByteOrder.nativeOrder()).asFloatBuffer();
 			currentBuffer.rewind();
 			newbuffer.put(currentBuffer);
 			currentBuffer.rewind();
-			mVertexMap.get(texid).vertices = newbuffer;
+			mVertexMap.get(tex.texId).vertices = newbuffer;
 		}
+		
+		Vec2 realuvmin = new Vec2((float)(1./tex.width*uvmin.x), (float)(1./tex.height*uvmin.y));
+		Vec2 realuvmax = new Vec2((float)(1./tex.width*uvmax.x), (float)(1./tex.height*uvmax.y));
 		
 		//addTriangle(mVertexMap.get(texid), a, b, c, rgb);
 		//addTriangle(mVertexMap.get(texid), c, b, d, rgb);
-		TextureInfo ti = mVertexMap.get(texid);
+		TextureInfo ti = mVertexMap.get(tex.texId);
 		
-		addVertex(ti, a, rgb, uvmin);
-		addVertex(ti, b, rgb, new Vec2(uvmin.x, uvmax.y));
-		addVertex(ti, c, rgb, new Vec2(uvmax.x, uvmin.y));
+		addVertex(ti, a, rgb, realuvmin);
+		addVertex(ti, b, rgb, new Vec2(realuvmin.x, realuvmax.y));
+		addVertex(ti, c, rgb, new Vec2(realuvmax.x, realuvmin.y));
 		
-		addVertex(ti, c, rgb, new Vec2(uvmax.x, uvmin.y));
-		addVertex(ti, b, rgb, new Vec2(uvmin.x, uvmax.y));
-		addVertex(ti, d, rgb, uvmax);
+		addVertex(ti, c, rgb, new Vec2(realuvmax.x, realuvmin.y));
+		addVertex(ti, b, rgb, new Vec2(realuvmin.x, realuvmax.y));
+		addVertex(ti, d, rgb, realuvmax);
 	}
 	
 	public void end ()
@@ -109,6 +118,10 @@ public class Vertexbatch {
 			glDrawArrays(GL_TRIANGLES, 0, cursor.getValue().vertexCount+1);
 			cursor.getValue().vertexCount = 0;
 		}
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
 	}
 
 	public void addVertex(TextureInfo ti, Vec3 p, Vec3 rgb, Vec2 uv)

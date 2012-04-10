@@ -1,5 +1,6 @@
 package oz.wizards.lumber;
 
+
 public class Main {
 
 	private static Thread gameThread;
