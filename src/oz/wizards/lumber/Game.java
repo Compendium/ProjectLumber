@@ -97,7 +97,7 @@ public class Game implements Runnable {
 		glRotatef(rotation.y, 0.f, 1.f, 0.f);
 		glTranslatef(-translation.x, -translation.y, -translation.z);
 
-		vb.putQuad(tex, new Vec3(0.f, 0.f, -5.f), new Vec3(0.f, 1.f, -5.f),
+		/*vb.putQuad(tex, new Vec3(0.f, 0.f, -5.f), new Vec3(0.f, 1.f, -5.f),
 				new Vec3(1.f, 0.f, -5.f), new Vec3(1.f, 1.f, -5.f), new Vec2(
 						0.f, 0.f), new Vec2(7.f, 7.f), new Vec3(1.f, 1.f, 1.f));
 		vb.putQuad(tex, new Vec3(0.f, 0.f, 5.f), new Vec3(0.f, 1.f, 5.f),
@@ -127,8 +127,8 @@ public class Game implements Runnable {
 						new Vec3(1.f, 1.f, 1.f));
 				}
 			}
-		}
-		vb.end();
+		}*/
+		//vb.end();
 		vertexBuffer.render();
 		glPopMatrix();
 	}
@@ -195,15 +195,15 @@ public class Game implements Runnable {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			vb = new Vertexbatch();
+			//vb = new Vertexbatch();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private void load() {
-		vertexBufferShader = new Shader("res/shaders/vertexbuffer");
-		vertexBuffer = new VertexBuffer(vertexBufferShader, tex.texId);
+		//vertexBufferShader = new Shader("res/shaders/vertexbuffer");
+		vertexBuffer = new VertexBuffer();
 		for(int x = 0; x < 256; x++)
 			for(int y = 0; y < 256; y++)
 			{
@@ -211,11 +211,28 @@ public class Game implements Runnable {
 					level[x + y*256] = 2;
 				else
 					level[x+y*256] = 1;
-				vertexBuffer.add(new Vector3f(x, -10.f, y+1), new Vector2f(0.f, 0.f), level[x+y*256]);
-				vertexBuffer.add(new Vector3f(x, -10.f, y), new Vector2f(0.f, 7.f), level[x+y*256]);
-				vertexBuffer.add(new Vector3f(x+1, -10.f, y+1), new Vector2f(7.f, 7.f), level[x+y*256]);
-				vertexBuffer.add(new Vector3f(x+1, -10.f, y), new Vector2f(7.f, 0.f), level[x+y*256]);
+				//vertexBuffer.add(new Vector3f(x, 0.f, y+1));//, new Vector2f(0.f, 0.f), level[x+y*256]);
+				//vertexBuffer.add(new Vector3f(x, 0.f, y));//, new Vector2f(0.f, 7.f), level[x+y*256]);
+				//vertexBuffer.add(new Vector3f(x+1, 0.f, y+1));//, new Vector2f(7.f, 7.f), level[x+y*256]);
+				//vertexBuffer.add(new Vector3f(x+1, 0.f, y));//, new Vector2f(7.f, 0.f), level[x+y*256]);
 			}
+		
+		/*vb.putQuad(tex, new Vec3(0.f, 0.f, -5.f), new Vec3(0.f, 1.f, -5.f),
+				new Vec3(1.f, 0.f, -5.f), new Vec3(1.f, 1.f, -5.f), new Vec2(
+						0.f, 0.f), new Vec2(7.f, 7.f), new Vec3(1.f, 1.f, 1.f));
+		vb.putQuad(tex, new Vec3(0.f, 0.f, 5.f), new Vec3(0.f, 1.f, 5.f),
+				new Vec3(1.f, 0.f, 5.f), new Vec3(1.f, 1.f, 5.f), new Vec2(0.f,
+						0.f), new Vec2(7.f, 7.f), new Vec3(1.f, 1.f, 1.f));*/
+		
+		//vertexBuffer.add(new Vector3f(0.f, 0.f, -5.f));//, new Vector2f(0.0f, 0.0f), (byte) 1);
+		//vertexBuffer.add(new Vector3f(0.f, 1.f, -5.f));//, new Vector2f(0.f, 7.0f), (byte) 1);
+		//vertexBuffer.add(new Vector3f(1.f, 0.f, -5.f));//, new Vector2f(7.f, 0.f), (byte) 1);
+		//vertexBuffer.add(new Vector3f(1.f, 1.f, -5.f));//, new Vector2f(7.f, 7.f), (byte) 1);
+				
+		vertexBuffer.add(new Vector3f(0.f, 0.f, 5.f));//, new Vector2f(0.0f, 0.0f), (byte) 1);
+		vertexBuffer.add(new Vector3f(0.f, 1.f, 5.f));//, new Vector2f(0.f, 7.0f), (byte) 1);
+		vertexBuffer.add(new Vector3f(1.f, 0.f, 5.f));//, new Vector2f(7.f, 0.f), (byte) 1);
+		vertexBuffer.add(new Vector3f(1.f, 1.f, 5.f));//, new Vector2f(7.f, 7.f), (byte) 1);
 		
 		try {
 			vertexBuffer.upload();

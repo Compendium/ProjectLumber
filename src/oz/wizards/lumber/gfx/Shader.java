@@ -16,22 +16,24 @@ public class Shader {
 	private int fragShader = 0;
 
 	public Shader(String path) {
-		shader = GL20.glCreateProgram();
 
 		vertShader = createShader(GL20.GL_VERTEX_SHADER, path + ".vert");
 		fragShader = createShader(GL20.GL_FRAGMENT_SHADER, path + ".frag");
 
+		shader = GL20.glCreateProgram();
+		GL20.glAttachShader(shader, vertShader);
+		GL20.glAttachShader(shader, fragShader);
 		
 		GL20.glLinkProgram(shader);
 		if(GL20.glGetProgram(shader, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
 			System.out.println("Error while linking");
 			printLogInfo(shader);
 		}
-		GL20.glValidateProgram(shader);
-		if(GL20.glGetProgram(shader, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
-			System.out.println("Error while validationg");
-			printLogInfo(shader);
-		}
+		//GL20.glValidateProgram(shader);
+		//if(GL20.glGetProgram(shader, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
+			//System.out.println("Error while validationg");
+			//printLogInfo(shader);
+		//}
 		//enable();
 		System.out.println("Created shader " + shader + ", with frag:" + fragShader + " and vert:" + vertShader);
 	}
@@ -77,7 +79,6 @@ public class Shader {
 		GL20.glCompileShader(s);
 		if(GL20.glGetProgram(s, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)
 			System.out.println("Error while compiling " + path);
-		GL20.glAttachShader(shader, s);
 		return s;
 	}
 
