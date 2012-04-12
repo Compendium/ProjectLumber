@@ -25,24 +25,27 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class VertexBuffer {
 	private int mVboid = -1;
-	private int mPositionAttrib;
+	private int mPositionAttrib = 0;
+	private int mTypeAttrib = 0;
 	private int mVertexCount = 0;
 	private int mMaxVertexCount = 10;
 	//FloatBuffer buffer;
 	ByteBuffer buffer;
 	
-	public VertexBuffer () {
+	public VertexBuffer (Shader s) {
 		//buffer = ByteBuffer.allocateDirect((3*4) * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-		buffer = ByteBuffer.allocateDirect(mMaxVertexCount * 3 * 4).order(ByteOrder.nativeOrder());
+		buffer = ByteBuffer.allocateDirect(mMaxVertexCount * (3 * 4 + 4)).order(ByteOrder.nativeOrder());
+		mPositionAttrib = s.getAttributeLocation("position");
+		mTypeAttrib = s.getAttributeLocation("type");
 	}
 	
-	public void add(Vector3f v) {
+	public void add(Vector3f v, int type) {
 		if(mVertexCount == mMaxVertexCount) {
 			mMaxVertexCount *= 2;
 			//FloatBuffer newbb = ByteBuffer.allocateDirect((mMaxVertexCount * (3*4))).order(ByteOrder.nativeOrder()).asFloatBuffer();
 			//newbb.put(buffer);
 			//buffer = newbb;
-			ByteBuffer newbb = ByteBuffer.allocateDirect(mMaxVertexCount * 3 * 4).order(ByteOrder.nativeOrder());
+			ByteBuffer newbb = ByteBuffer.allocateDirect(mMaxVertexCount * (3 * 4 + 4)).order(ByteOrder.nativeOrder());
 			newbb.rewind();
 			newbb.put(buffer);
 			buffer = newbb;
@@ -53,6 +56,7 @@ public class VertexBuffer {
 		buffer.putFloat(v.x);
 		buffer.putFloat(v.y);
 		buffer.putFloat(v.z);
+		buffer.putInt(type);
 	}
 	
 	public void upload() throws IOException{
@@ -60,10 +64,14 @@ public class VertexBuffer {
 		glBindBuffer(GL_ARRAY_BUFFER, mVboid);
 		buffer.flip();
 		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, 0);
-	}
-	
+		//fixed//glEnableClientState(GL_VERTEX_ARRAY);
+		//fixed//glVertexPointer(3, GL_FLOAT, 0, 0);
+		glEnableVertexAttribArray(mPositionAttrib);
+		glVertexAttribPointer(mPositionAttrib, 3, GL_FLOAT, false, (3*4+4), 0);
+		glEnableVertexAttribArray(mTypeAttrib);
+		glVertexAttribPointer(mTypeAttrib, 1, GL_INT, false, (3*4+4), (3*4));
+}
+
 	public void render(){
 		//System.out.println(mVertexCount + "");
 		glBindBuffer(GL_ARRAY_BUFFER, mVboid);

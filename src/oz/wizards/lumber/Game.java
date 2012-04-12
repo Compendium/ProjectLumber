@@ -129,7 +129,9 @@ public class Game implements Runnable {
 			}
 		}*/
 		//vb.end();
+		vertexBufferShader.enable();
 		vertexBuffer.render();
+		vertexBufferShader.disable();
 		glPopMatrix();
 	}
 
@@ -202,8 +204,8 @@ public class Game implements Runnable {
 	}
 
 	private void load() {
-		//vertexBufferShader = new Shader("res/shaders/vertexbuffer");
-		vertexBuffer = new VertexBuffer();
+		vertexBufferShader = new Shader("res/shaders/vertexbuffer");
+		vertexBuffer = new VertexBuffer(vertexBufferShader);
 		for(int x = 0; x < 256; x++)
 			for(int y = 0; y < 256; y++)
 			{
@@ -211,10 +213,10 @@ public class Game implements Runnable {
 					level[x + y*256] = 2;
 				else
 					level[x+y*256] = 1;
-				//vertexBuffer.add(new Vector3f(x, 0.f, y+1));//, new Vector2f(0.f, 0.f), level[x+y*256]);
-				//vertexBuffer.add(new Vector3f(x, 0.f, y));//, new Vector2f(0.f, 7.f), level[x+y*256]);
-				//vertexBuffer.add(new Vector3f(x+1, 0.f, y+1));//, new Vector2f(7.f, 7.f), level[x+y*256]);
-				//vertexBuffer.add(new Vector3f(x+1, 0.f, y));//, new Vector2f(7.f, 0.f), level[x+y*256]);
+				vertexBuffer.add(new Vector3f(x, 0.f, y+1), 0);//, new Vector2f(0.f, 0.f), level[x+y*256]);
+				vertexBuffer.add(new Vector3f(x, 0.f, y), 0);//, new Vector2f(0.f, 7.f), level[x+y*256]);
+				vertexBuffer.add(new Vector3f(x+1, 0.f, y+1), 0);//, new Vector2f(7.f, 7.f), level[x+y*256]);
+				vertexBuffer.add(new Vector3f(x+1, 0.f, y), 0);//, new Vector2f(7.f, 0.f), level[x+y*256]);
 			}
 		
 		/*vb.putQuad(tex, new Vec3(0.f, 0.f, -5.f), new Vec3(0.f, 1.f, -5.f),
@@ -229,10 +231,10 @@ public class Game implements Runnable {
 		//vertexBuffer.add(new Vector3f(1.f, 0.f, -5.f));//, new Vector2f(7.f, 0.f), (byte) 1);
 		//vertexBuffer.add(new Vector3f(1.f, 1.f, -5.f));//, new Vector2f(7.f, 7.f), (byte) 1);
 				
-		vertexBuffer.add(new Vector3f(0.f, 1.f, -4.f));//, new Vector2f(0.0f, 0.0f), (byte) 1);
-		vertexBuffer.add(new Vector3f(0.f, 0.f, -4.f));//, new Vector2f(0.f, 7.0f), (byte) 1);
-		vertexBuffer.add(new Vector3f(1.f, 0.f, -4.f));//, new Vector2f(7.f, 0.f), (byte) 1);
-		vertexBuffer.add(new Vector3f(1.f, 1.f, -4.f));//, new Vector2f(7.f, 7.f), (byte) 1);
+		vertexBuffer.add(new Vector3f(0.f, 1.f, -4.f), 1);//, new Vector2f(0.0f, 0.0f), (byte) 1);
+		vertexBuffer.add(new Vector3f(0.f, 0.f, -4.f), 1);//, new Vector2f(0.f, 7.0f), (byte) 1);
+		vertexBuffer.add(new Vector3f(1.f, 0.f, -4.f), 1);//, new Vector2f(7.f, 0.f), (byte) 1);
+		vertexBuffer.add(new Vector3f(1.f, 1.f, -4.f), 1);//, new Vector2f(7.f, 7.f), (byte) 1);
 		//vertexBuffer.add(new Vector3f(0.f, 0.f, -4.f));
 		//vertexBuffer.add(new Vector3f(0.f, 1.f, -4.f));
 		//vertexBuffer.add(new Vector3f(1.f, 0.f, -4.f));

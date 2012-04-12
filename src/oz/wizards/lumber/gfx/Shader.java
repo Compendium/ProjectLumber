@@ -22,7 +22,7 @@ public class Shader {
 		GL20.glLinkProgram(shader);
 		if(GL20.glGetProgram(shader, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
 			System.out.println("Error while linking");
-			printLogInfo(shader);
+			printProgramLogInfo(shader);
 		}
 		//GL20.glValidateProgram(shader);
 		//if(GL20.glGetProgram(shader, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
@@ -72,16 +72,29 @@ public class Shader {
 		
 		GL20.glShaderSource(s, code);
 		GL20.glCompileShader(s);
-		if(GL20.glGetProgram(s, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)
+		if(GL20.glGetShader(s, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)
+		{
 			System.out.println("Error while compiling " + path);
+			printShaderLogInfo(s);
+		}
 		return s;
 	}
 
-	private static boolean printLogInfo(int obj) {
+	private static boolean printProgramLogInfo(int obj) {
 		int length = GL20.glGetProgram(obj, GL20.GL_INFO_LOG_LENGTH);
 		if (length > 1) {
 			String out = GL20.glGetProgramInfoLog(obj, 256);
-			System.out.println("\t" + out);
+			System.out.print("\t" + out);
+		} else
+			return true;
+		return false;
+	}
+	
+	private static boolean printShaderLogInfo(int obj) {
+		int length = GL20.glGetShader(obj, GL20.GL_INFO_LOG_LENGTH);
+		if (length > 1) {
+			String out = GL20.glGetShaderInfoLog(obj, 256);
+			System.out.print("\t" + out);
 		} else
 			return true;
 		return false;
