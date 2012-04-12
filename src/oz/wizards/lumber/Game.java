@@ -174,7 +174,7 @@ public class Game implements Runnable {
 		try {
 			Display.setDisplayMode(new DisplayMode(800, 600));
 			Display.create();
-			Display.setLocation(-1680, 0);
+			//Display.setLocation(-1680, 0);
 
 			// init OpenGL
 			glMatrixMode(GL_PROJECTION);
@@ -229,10 +229,13 @@ public class Game implements Runnable {
 		//vertexBuffer.add(new Vector3f(1.f, 0.f, -5.f));//, new Vector2f(7.f, 0.f), (byte) 1);
 		//vertexBuffer.add(new Vector3f(1.f, 1.f, -5.f));//, new Vector2f(7.f, 7.f), (byte) 1);
 				
-		vertexBuffer.add(new Vector3f(0.f, 0.f, 5.f));//, new Vector2f(0.0f, 0.0f), (byte) 1);
-		vertexBuffer.add(new Vector3f(0.f, 1.f, 5.f));//, new Vector2f(0.f, 7.0f), (byte) 1);
-		vertexBuffer.add(new Vector3f(1.f, 0.f, 5.f));//, new Vector2f(7.f, 0.f), (byte) 1);
-		vertexBuffer.add(new Vector3f(1.f, 1.f, 5.f));//, new Vector2f(7.f, 7.f), (byte) 1);
+		vertexBuffer.add(new Vector3f(0.f, 1.f, -4.f));//, new Vector2f(0.0f, 0.0f), (byte) 1);
+		vertexBuffer.add(new Vector3f(0.f, 0.f, -4.f));//, new Vector2f(0.f, 7.0f), (byte) 1);
+		vertexBuffer.add(new Vector3f(1.f, 0.f, -4.f));//, new Vector2f(7.f, 0.f), (byte) 1);
+		vertexBuffer.add(new Vector3f(1.f, 1.f, -4.f));//, new Vector2f(7.f, 7.f), (byte) 1);
+		//vertexBuffer.add(new Vector3f(0.f, 0.f, -4.f));
+		//vertexBuffer.add(new Vector3f(0.f, 1.f, -4.f));
+		//vertexBuffer.add(new Vector3f(1.f, 0.f, -4.f));
 		
 		try {
 			vertexBuffer.upload();

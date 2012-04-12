@@ -27,13 +27,13 @@ public class VertexBuffer {
 	private int mVboid = -1;
 	private int mPositionAttrib;
 	private int mVertexCount = 0;
-	private int mMaxVertexCount = 4;
+	private int mMaxVertexCount = 10;
 	//FloatBuffer buffer;
 	ByteBuffer buffer;
 	
 	public VertexBuffer () {
 		//buffer = ByteBuffer.allocateDirect((3*4) * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-		buffer = ByteBuffer.allocateDirect(3*4*4).order(ByteOrder.nativeOrder());
+		buffer = ByteBuffer.allocateDirect(mMaxVertexCount * 3 * 4).order(ByteOrder.nativeOrder());
 	}
 	
 	public void add(Vector3f v) {
@@ -43,8 +43,10 @@ public class VertexBuffer {
 			//newbb.put(buffer);
 			//buffer = newbb;
 			ByteBuffer newbb = ByteBuffer.allocateDirect(mMaxVertexCount * 3 * 4).order(ByteOrder.nativeOrder());
+			newbb.rewind();
 			newbb.put(buffer);
 			buffer = newbb;
+			System.out.println("Buffer-resize");
 		}
 		mVertexCount++;
 		
@@ -63,7 +65,7 @@ public class VertexBuffer {
 	}
 	
 	public void render(){
-		System.out.println(mVertexCount + "");
+		//System.out.println(mVertexCount + "");
 		glBindBuffer(GL_ARRAY_BUFFER, mVboid);
 		glDrawArrays(GL_QUADS, 0, mMaxVertexCount);
 	}

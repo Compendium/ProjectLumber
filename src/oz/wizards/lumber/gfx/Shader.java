@@ -2,12 +2,8 @@ package oz.wizards.lumber.gfx;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL20;
 
 public class Shader {
@@ -16,7 +12,6 @@ public class Shader {
 	private int fragShader = 0;
 
 	public Shader(String path) {
-
 		vertShader = createShader(GL20.GL_VERTEX_SHADER, path + ".vert");
 		fragShader = createShader(GL20.GL_FRAGMENT_SHADER, path + ".frag");
 
