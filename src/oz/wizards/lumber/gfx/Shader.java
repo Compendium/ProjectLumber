@@ -21,7 +21,7 @@ public class Shader {
 		
 		GL20.glLinkProgram(shader);
 		if(GL20.glGetProgram(shader, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
-			System.out.println("Error while linking");
+			System.err.println("Error while linking");
 			printProgramLogInfo(shader);
 		}
 		//GL20.glValidateProgram(shader);
@@ -45,14 +45,14 @@ public class Shader {
 		int r =  GL20.glGetUniformLocation(shader, u);
 		//printLogInfo(shader);
 		if(r == -1)
-			System.out.println("Error while getting uniform : " + u);
+			System.err.println("Error while getting uniform : " + u);
 		return r;
 	}
 
 	public int getAttributeLocation(String a) {
 		int r = GL20.glGetAttribLocation(shader, a);
 		if(r == -1)
-			System.out.println("Error while getting attrib : " + a);
+			System.err.println("Error while getting attrib : " + a);
 		return r;
 	}
 
@@ -68,13 +68,14 @@ public class Shader {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.exit(-1);
 		}
 		
 		GL20.glShaderSource(s, code);
 		GL20.glCompileShader(s);
 		if(GL20.glGetShader(s, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)
 		{
-			System.out.println("Error while compiling " + path);
+			System.err.println("Error while compiling " + path);
 			printShaderLogInfo(s);
 		}
 		return s;
@@ -84,7 +85,7 @@ public class Shader {
 		int length = GL20.glGetProgram(obj, GL20.GL_INFO_LOG_LENGTH);
 		if (length > 1) {
 			String out = GL20.glGetProgramInfoLog(obj, 256);
-			System.out.print("\t" + out);
+			System.err.print(out);
 		} else
 			return true;
 		return false;
@@ -94,7 +95,7 @@ public class Shader {
 		int length = GL20.glGetShader(obj, GL20.GL_INFO_LOG_LENGTH);
 		if (length > 1) {
 			String out = GL20.glGetShaderInfoLog(obj, 256);
-			System.out.print("\t" + out);
+			System.err.print(out);
 		} else
 			return true;
 		return false;

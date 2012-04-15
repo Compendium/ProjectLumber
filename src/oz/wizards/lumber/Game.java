@@ -52,9 +52,12 @@ public class Game implements Runnable {
 	long deltaTime = 0;
 	long lastPrinted = 0;
 	
-	byte[] level = new byte[256*256];
-	Shader vertexBufferShader;
-	VertexBuffer vertexBuffer;
+	private static final int dim = 64;
+	byte[] level = new byte[dim*dim];
+	Shader normalShader;
+	Shader billboardShader;
+	VertexBuffer normalBuffer;
+	VertexBuffer billboardBuffer;
 
 	@Override
 	public void run() {
@@ -80,7 +83,7 @@ public class Game implements Runnable {
 			Display.update();
 			deltaTime = System.nanoTime() - deltaTime;
 			if(lastPrinted < System.nanoTime()) {
-				lastPrinted = System.nanoTime() + 1L * 1000000000L;
+				lastPrinted = System.nanoTime() + 5L * 1000000000L;
 				System.out.println("dt: " + ((double)deltaTime / 1000000.0) + " ms");
 			}
 		}
@@ -129,9 +132,16 @@ public class Game implements Runnable {
 			}
 		}*/
 		//vb.end();
-		vertexBufferShader.enable();
-		vertexBuffer.render();
-		vertexBufferShader.disable();
+		
+		normalShader.enable();
+		normalBuffer.render();
+		normalShader.disable();
+		
+		billboardShader.enable();
+		billboardBuffer.render();
+		billboardShader.disable();
+		
+		
 		glPopMatrix();
 	}
 
@@ -204,19 +214,40 @@ public class Game implements Runnable {
 	}
 
 	private void load() {
-		vertexBufferShader = new Shader("res/shaders/vertexbuffer");
-		vertexBuffer = new VertexBuffer(vertexBufferShader);
-		for(int x = 0; x < 256; x++)
-			for(int y = 0; y < 256; y++)
+		normalShader = new Shader("res/shaders/normal");
+		billboardShader = new Shader("res/shaders/billboard");
+		
+		normalBuffer = new VertexBuffer(normalShader);
+		billboardBuffer = new VertexBuffer(billboardShader);
+		
+		for(int x = 0; x < dim; x++)
+			for(int y = 0; y < dim; y++)
 			{
-				if(Math.random() > 0.6)
-					level[x + y*256] = 2;
-				else
-					level[x+y*256] = 1;
-				vertexBuffer.add(new Vector3f(x, 0.f, y+1), 0);//, new Vector2f(0.f, 0.f), level[x+y*256]);
-				vertexBuffer.add(new Vector3f(x, 0.f, y), 0);//, new Vector2f(0.f, 7.f), level[x+y*256]);
-				vertexBuffer.add(new Vector3f(x+1, 0.f, y+1), 0);//, new Vector2f(7.f, 7.f), level[x+y*256]);
-				vertexBuffer.add(new Vector3f(x+1, 0.f, y), 0);//, new Vector2f(7.f, 0.f), level[x+y*256]);
+				if(Math.random() > 0.6) {
+					level[x + y*dim] = 2;
+					//billboardBuffer.add(new Vector3f(x, -2.f, y+1));//, new Vector2f(0.f, 0.f), level[x+y*256]);
+					//billboardBuffer.add(new Vector3f(x, -2.f, y));//, new Vector2f(0.f, 7.f), level[x+y*256]);
+					//billboardBuffer.add(new Vector3f(x+1, -2.f, y+1));//, new Vector2f(7.f, 7.f), level[x+y*256]);
+					//billboardBuffer.add(new Vector3f(x+1, -2.f, y));//, new Vector2f(7.f, 0.f), level[x+y*256]);
+					
+					billboardBuffer.add(new Vector3f(0.f+x, 1.f+y, -4.f));//, new Vector2f(0.0f, 0.0f), (byte) 1);
+					billboardBuffer.add(new Vector3f(0.f+x, 0.f+y, -4.f));//, new Vector2f(0.f, 7.0f), (byte) 1);
+					billboardBuffer.add(new Vector3f(1.f+x, 0.f+y, -4.f));//, new Vector2f(7.f, 0.f), (byte) 1);
+					billboardBuffer.add(new Vector3f(1.f+x, 1.f+y, -4.f));//, new Vector2f(7.f, 7.f), (byte) 1);
+				}
+				else {
+					level[x+y*dim] = 1;
+				}
+				
+				//normalBuffer.add(new Vector3f(x, 0.f, y+1));
+				//normalBuffer.add(new Vector3f(x, 0.f, y));
+				//normalBuffer.add(new Vector3f(x+1, 0.f, y));
+				//normalBuffer.add(new Vector3f(x+1, 0.f, y+1));
+				
+				normalBuffer.add(new Vector3f(0.f+x, 1.f+y, -4.f));//, new Vector2f(0.0f, 0.0f), (byte) 1);
+				normalBuffer.add(new Vector3f(0.f+x, 0.f+y, -4.f));//, new Vector2f(0.f, 7.0f), (byte) 1);
+				normalBuffer.add(new Vector3f(1.f+x, 0.f+y, -4.f));//, new Vector2f(7.f, 0.f), (byte) 1);
+				normalBuffer.add(new Vector3f(1.f+x, 1.f+y, -4.f));//, new Vector2f(7.f, 7.f), (byte) 1);
 			}
 		
 		/*vb.putQuad(tex, new Vec3(0.f, 0.f, -5.f), new Vec3(0.f, 1.f, -5.f),
@@ -231,16 +262,17 @@ public class Game implements Runnable {
 		//vertexBuffer.add(new Vector3f(1.f, 0.f, -5.f));//, new Vector2f(7.f, 0.f), (byte) 1);
 		//vertexBuffer.add(new Vector3f(1.f, 1.f, -5.f));//, new Vector2f(7.f, 7.f), (byte) 1);
 				
-		vertexBuffer.add(new Vector3f(0.f, 1.f, -4.f), 1);//, new Vector2f(0.0f, 0.0f), (byte) 1);
-		vertexBuffer.add(new Vector3f(0.f, 0.f, -4.f), 1);//, new Vector2f(0.f, 7.0f), (byte) 1);
-		vertexBuffer.add(new Vector3f(1.f, 0.f, -4.f), 1);//, new Vector2f(7.f, 0.f), (byte) 1);
-		vertexBuffer.add(new Vector3f(1.f, 1.f, -4.f), 1);//, new Vector2f(7.f, 7.f), (byte) 1);
+		normalBuffer.add(new Vector3f(0.f, 1.f, -4.f));//, new Vector2f(0.0f, 0.0f), (byte) 1);
+		normalBuffer.add(new Vector3f(0.f, 0.f, -4.f));//, new Vector2f(0.f, 7.0f), (byte) 1);
+		normalBuffer.add(new Vector3f(1.f, 0.f, -4.f));//, new Vector2f(7.f, 0.f), (byte) 1);
+		normalBuffer.add(new Vector3f(1.f, 1.f, -4.f));//, new Vector2f(7.f, 7.f), (byte) 1);
 		//vertexBuffer.add(new Vector3f(0.f, 0.f, -4.f));
 		//vertexBuffer.add(new Vector3f(0.f, 1.f, -4.f));
 		//vertexBuffer.add(new Vector3f(1.f, 0.f, -4.f));
 		
 		try {
-			vertexBuffer.upload();
+			normalBuffer.upload();
+			billboardBuffer.upload();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
