@@ -38,7 +38,7 @@ import oz.wizards.lumber.math.Vec3;
 @SuppressWarnings("unused")
 public class Game implements Runnable {
 
-	public Vec3 translation = new Vec3();
+	public Vector3f translation = new Vector3f();
 	public Vec3 rotation = new Vec3();
 
 	private boolean loop = true;
@@ -57,7 +57,7 @@ public class Game implements Runnable {
 	Shader normalShader;
 	Shader billboardShader;
 	VertexBuffer normalBuffer;
-	VertexBuffer billboardBuffer;
+	VertexBuffer entityBuffer;
 
 	@Override
 	public void run() {
@@ -134,12 +134,9 @@ public class Game implements Runnable {
 		//vb.end();
 		
 		normalShader.enable();
-		normalBuffer.render();
+		normalBuffer.render(GL_QUADS, translation);
+		entityBuffer.render(GL_QUADS, translation);
 		normalShader.disable();
-		
-		billboardShader.enable();
-		billboardBuffer.render();
-		billboardShader.disable();
 		
 		
 		glPopMatrix();
@@ -159,25 +156,45 @@ public class Game implements Runnable {
 			
 			if(rotation.x > 90.0f) rotation.x = 90.0f;
 			if(rotation.x < -90.0f) rotation.x = -90.0f;
-		} else {
+		}
+		if(Mouse.isButtonDown(0)){
 			float vel = 0.1f;
 			if (m.y < Display.getHeight() / 10) {
 				 translation.x -= (float)Math.sin(rotation.y * (Math.PI /
-				 180.0)) * 0.05f;
+				 180.0)) * vel;
 				 translation.z += (float)Math.cos(rotation.y * (Math.PI /
-				 180.0)) * 0.05f;
+				 180.0)) * vel;
 				 translation.y += (float)Math.sin(rotation.x * (Math.PI /
-				 180.0)) * 0.05f;
-				// translation.z += 1;
+				 180.0)) * vel;
+				 //translation.z += 1;
 			} else if (m.y > (Display.getHeight() / 10) * 9) {
 				 translation.x += (float)Math.sin(rotation.y * (Math.PI /
-				 180.0)) * 0.05f;
+				 180.0)) * vel;
 				 translation.z -= (float)Math.cos(rotation.y * (Math.PI /
-				 180.0)) * 0.05f;
+				 180.0)) * vel;
 				 translation.y -= (float)Math.sin(rotation.x * (Math.PI /
-				 180.0)) * 0.05f;
-				// translation.z += -1;
+				 180.0)) * vel;
+				 //translation.z += -1;
 			}
+			if(m.x < Display.getWidth() / 10) {
+				translation.x -= .1;
+			} else if (m.x > (Display.getWidth() / 10) * 9) {
+				translation.x += .1;
+			}
+		}
+		
+		float vel = 1.f;
+		if(Keyboard.isKeyDown(Keyboard.KEY_W)) {
+			translation.z -= vel;
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			translation.z += vel;
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			translation.x -= vel;
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			translation.x += vel;
 		}
 		//System.out.println("" + rotation.y);
 	}
@@ -199,8 +216,21 @@ public class Game implements Runnable {
 
 			glEnable(GL_TEXTURE_2D);
 			glDisable(GL_SMOOTH);
+			//glEnable(GL_CULL_FACE);
 			glDisable(GL_CULL_FACE);
-			//glFrontFace(GL_CW);
+			glFrontFace(GL_CW);
+			
+			//glEnable(GL_ALPHA_TEST);
+			//glAlphaFunc(GL_EQUAL, 1.0f);
+			//glDepthMask(false);
+			
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable(GL_BLEND);
+			
+			glEnable(GL_DEPTH_TEST);
+			
+			float k = 1.f / 255.f;
+			glClearColor(k * 0x80, k * 0xa6, k * 0xa9, 1.0f);
 
 			try {
 				tex = new Texture("res/tiles.png");
@@ -215,64 +245,45 @@ public class Game implements Runnable {
 
 	private void load() {
 		normalShader = new Shader("res/shaders/normal");
-		billboardShader = new Shader("res/shaders/billboard");
 		
-		normalBuffer = new VertexBuffer(normalShader);
-		billboardBuffer = new VertexBuffer(billboardShader);
+		normalBuffer = new VertexBuffer(normalShader, tex);
+		entityBuffer = new VertexBuffer(normalShader, tex);
 		
 		for(int x = 0; x < dim; x++)
 			for(int y = 0; y < dim; y++)
 			{
-				if(Math.random() > 0.6) {
+				if(Math.random() > 0.9) {
 					level[x + y*dim] = 2;
-					//billboardBuffer.add(new Vector3f(x, -2.f, y+1));//, new Vector2f(0.f, 0.f), level[x+y*256]);
-					//billboardBuffer.add(new Vector3f(x, -2.f, y));//, new Vector2f(0.f, 7.f), level[x+y*256]);
-					//billboardBuffer.add(new Vector3f(x+1, -2.f, y+1));//, new Vector2f(7.f, 7.f), level[x+y*256]);
-					//billboardBuffer.add(new Vector3f(x+1, -2.f, y));//, new Vector2f(7.f, 0.f), level[x+y*256]);
 					
-					billboardBuffer.add(new Vector3f(0.f+x, 1.f+y, -4.f));//, new Vector2f(0.0f, 0.0f), (byte) 1);
-					billboardBuffer.add(new Vector3f(0.f+x, 0.f+y, -4.f));//, new Vector2f(0.f, 7.0f), (byte) 1);
-					billboardBuffer.add(new Vector3f(1.f+x, 0.f+y, -4.f));//, new Vector2f(7.f, 0.f), (byte) 1);
-					billboardBuffer.add(new Vector3f(1.f+x, 1.f+y, -4.f));//, new Vector2f(7.f, 7.f), (byte) 1);
+					normalBuffer.add(new Vector3f(0.f+x, 0.f, 0+y), new Vector2f(0.f, 16.f));
+					normalBuffer.add(new Vector3f(1.f+x, 0.f, 0+y), new Vector2f(15.f, 16.f));
+					normalBuffer.add(new Vector3f(1.f+x, 0.f, 1+y), new Vector2f(15.f, 31.f));
+					normalBuffer.add(new Vector3f(0.f+x, 0.f, 1+y), new Vector2f(0.f, 31.f));
+					
+					entityBuffer.add(new Vector3f(0.f+x, 1.f, 0+y), new Vector2f(0.f, 0.f));
+					entityBuffer.add(new Vector3f(1.f+x, 1.f, 1+y), new Vector2f(16.f, 0.f));
+					entityBuffer.add(new Vector3f(1.f+x, 0.f, 1+y), new Vector2f(16.f, 16.f));
+					entityBuffer.add(new Vector3f(0.f+x, 0.f, 0+y), new Vector2f(0.f, 16.f));
+					
+					entityBuffer.add(new Vector3f(0.f+x, 1.f, 1+y), new Vector2f(0.f, 0.f));
+					entityBuffer.add(new Vector3f(1.f+x, 1.f, 0+y), new Vector2f(16.f, 0.f));
+					entityBuffer.add(new Vector3f(1.f+x, 0.f, 0+y), new Vector2f(16.f, 16.f));
+					entityBuffer.add(new Vector3f(0.f+x, 0.f, 1+y), new Vector2f(0.f, 16.f));
+					
 				}
 				else {
 					level[x+y*dim] = 1;
+					
+					normalBuffer.add(new Vector3f(0.f+x, 0.f, 0+y), new Vector2f(0.f, 32.f));
+					normalBuffer.add(new Vector3f(1.f+x, 0.f, 0+y), new Vector2f(15.f, 32.f));
+					normalBuffer.add(new Vector3f(1.f+x, 0.f, 1+y), new Vector2f(15.f, 47.f));
+					normalBuffer.add(new Vector3f(0.f+x, 0.f, 1+y), new Vector2f(0.f, 47.f));
 				}
-				
-				//normalBuffer.add(new Vector3f(x, 0.f, y+1));
-				//normalBuffer.add(new Vector3f(x, 0.f, y));
-				//normalBuffer.add(new Vector3f(x+1, 0.f, y));
-				//normalBuffer.add(new Vector3f(x+1, 0.f, y+1));
-				
-				normalBuffer.add(new Vector3f(0.f+x, 1.f+y, -4.f));//, new Vector2f(0.0f, 0.0f), (byte) 1);
-				normalBuffer.add(new Vector3f(0.f+x, 0.f+y, -4.f));//, new Vector2f(0.f, 7.0f), (byte) 1);
-				normalBuffer.add(new Vector3f(1.f+x, 0.f+y, -4.f));//, new Vector2f(7.f, 0.f), (byte) 1);
-				normalBuffer.add(new Vector3f(1.f+x, 1.f+y, -4.f));//, new Vector2f(7.f, 7.f), (byte) 1);
 			}
-		
-		/*vb.putQuad(tex, new Vec3(0.f, 0.f, -5.f), new Vec3(0.f, 1.f, -5.f),
-				new Vec3(1.f, 0.f, -5.f), new Vec3(1.f, 1.f, -5.f), new Vec2(
-						0.f, 0.f), new Vec2(7.f, 7.f), new Vec3(1.f, 1.f, 1.f));
-		vb.putQuad(tex, new Vec3(0.f, 0.f, 5.f), new Vec3(0.f, 1.f, 5.f),
-				new Vec3(1.f, 0.f, 5.f), new Vec3(1.f, 1.f, 5.f), new Vec2(0.f,
-						0.f), new Vec2(7.f, 7.f), new Vec3(1.f, 1.f, 1.f));*/
-		
-		//vertexBuffer.add(new Vector3f(0.f, 0.f, -5.f));//, new Vector2f(0.0f, 0.0f), (byte) 1);
-		//vertexBuffer.add(new Vector3f(0.f, 1.f, -5.f));//, new Vector2f(0.f, 7.0f), (byte) 1);
-		//vertexBuffer.add(new Vector3f(1.f, 0.f, -5.f));//, new Vector2f(7.f, 0.f), (byte) 1);
-		//vertexBuffer.add(new Vector3f(1.f, 1.f, -5.f));//, new Vector2f(7.f, 7.f), (byte) 1);
-				
-		normalBuffer.add(new Vector3f(0.f, 1.f, -4.f));//, new Vector2f(0.0f, 0.0f), (byte) 1);
-		normalBuffer.add(new Vector3f(0.f, 0.f, -4.f));//, new Vector2f(0.f, 7.0f), (byte) 1);
-		normalBuffer.add(new Vector3f(1.f, 0.f, -4.f));//, new Vector2f(7.f, 0.f), (byte) 1);
-		normalBuffer.add(new Vector3f(1.f, 1.f, -4.f));//, new Vector2f(7.f, 7.f), (byte) 1);
-		//vertexBuffer.add(new Vector3f(0.f, 0.f, -4.f));
-		//vertexBuffer.add(new Vector3f(0.f, 1.f, -4.f));
-		//vertexBuffer.add(new Vector3f(1.f, 0.f, -4.f));
 		
 		try {
 			normalBuffer.upload();
-			billboardBuffer.upload();
+			entityBuffer.upload();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

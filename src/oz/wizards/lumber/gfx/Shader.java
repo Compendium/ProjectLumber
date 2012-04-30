@@ -7,11 +7,13 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
 public class Shader {
+	private String path;
 	private int shader = 0;
 	private int vertShader = 0;
 	private int fragShader = 0;
 
 	public Shader(String path) {
+		this.path = path;
 		vertShader = createShader(GL20.GL_VERTEX_SHADER, path + ".vert");
 		fragShader = createShader(GL20.GL_FRAGMENT_SHADER, path + ".frag");
 
@@ -45,14 +47,14 @@ public class Shader {
 		int r =  GL20.glGetUniformLocation(shader, u);
 		//printLogInfo(shader);
 		if(r == -1)
-			System.err.println("Error while getting uniform : " + u);
+			System.err.println("[" + path + "] Error while getting uniform : " + u);
 		return r;
 	}
 
 	public int getAttributeLocation(String a) {
 		int r = GL20.glGetAttribLocation(shader, a);
 		if(r == -1)
-			System.err.println("Error while getting attrib : " + a);
+			System.err.println("[" + path + "] Error while getting attrib : " + a);
 		return r;
 	}
 
