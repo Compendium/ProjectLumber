@@ -31,7 +31,8 @@ import static org.lwjgl.opengl.GL21.*;
 import oz.wizards.lumber.gfx.Shader;
 import oz.wizards.lumber.gfx.Texture;
 import oz.wizards.lumber.gfx.VertexBuffer;
-import oz.wizards.lumber.gfx.Vertexbatch;
+import oz.wizards.lumber.gfx.VertexBatch;
+import oz.wizards.lumber.io.KeyboardLayout;
 import oz.wizards.lumber.math.Vec2;
 import oz.wizards.lumber.math.Vec3;
 
@@ -44,7 +45,7 @@ public class Game implements Runnable {
 	private boolean loop = true;
 
 	Texture tex;
-	Vertexbatch vb;
+	VertexBatch vb;
 
 	int prevx = -1, prevy = -1;
 	int diffy = 0, diffx = 0;
@@ -58,9 +59,13 @@ public class Game implements Runnable {
 	Shader billboardShader;
 	VertexBuffer normalBuffer;
 	VertexBuffer entityBuffer;
+	
+	KeyboardLayout kbl;
 
 	@Override
 	public void run() {
+		kbl = new KeyboardLayout("keyboardlayout.txt");
+		
 		init();
 		load();
 		while (loop) {
@@ -150,7 +155,7 @@ public class Game implements Runnable {
 		m.x = Mouse.getX();
 		m.y = Mouse.getY();
 
-		if (Mouse.isButtonDown(2)) {
+		if (Mouse.isButtonDown(1)) {
 			rotation.x += -diffy * 1.f;
 			rotation.y += diffx * 1.f;
 			

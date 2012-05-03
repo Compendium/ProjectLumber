@@ -22,7 +22,7 @@ import oz.wizards.lumber.math.Vec3;
  * A vertex batch, that uses vertex arrays to draw
  * @author compendium
  */
-public class Vertexbatch {
+public class VertexBatch {
 	public Vec3 translation = new Vec3();
 	public Vec3 rotation = new Vec3();
 
@@ -42,9 +42,9 @@ public class Vertexbatch {
 	
 	private Map <Integer /*texids*/, TextureInfo /*vertices*/> mVertexMap;
 	
-	public Vertexbatch ()
+	public VertexBatch ()
 	{
-		mVertexMap = new HashMap<Integer, Vertexbatch.TextureInfo>();
+		mVertexMap = new HashMap<Integer, VertexBatch.TextureInfo>();
 	}
 	
 	/**
