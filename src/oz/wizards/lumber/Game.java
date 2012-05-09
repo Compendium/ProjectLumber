@@ -23,6 +23,7 @@ import oz.wizards.lumber.gfx.Texture;
 import oz.wizards.lumber.gfx.VertexBatch;
 import oz.wizards.lumber.gfx.VertexBuffer;
 import oz.wizards.lumber.io.KeyboardLayout;
+import oz.wizards.lumber.math.Rectangle2f;
 import oz.wizards.lumber.math.Vec2;
 import oz.wizards.lumber.math.Vec3;
 
@@ -94,7 +95,7 @@ public class Game implements Runnable {
 
 		glRotatef(rotation.x, 1.f, 0.f, 0.f);
 		glRotatef(rotation.y, 0.f, 1.f, 0.f);
-		glScalef(0.5f, 0.5f, 1.f);
+		glScalef(.08f, .08f, 1.f);
 		glTranslatef(-translation.x, -translation.y, -translation.z);
 
 		/*
@@ -144,6 +145,19 @@ public class Game implements Runnable {
 					uvmax.x = 15;
 					uvmax.y = 47;
 				}
+				Rectangle2f r = new Rectangle2f(new Vector2f(x
+						- Display.getWidth(), y - Display.getHeight()),
+						new Vector2f(x + 1 - Display.getWidth(), y + 1 - Display.getHeight()));
+				if (r.isInside(new Vector2f(m.x, m.y))) {
+					color = new Vector3f(1, 0, 0);
+					System.out.println("comparematch");
+				} else {
+					color = new Vector3f(0, 1, 0);
+				}
+				// System.out.println("m(" + m.x + "|" + m.y + "), " + " r(min("
+				// + r.min.x + "|" + r.min.y + "), max(" + r.max.x + "|" +
+				// r.max.y + ")");
+
 				vb.putQuad(tex, new Vector3f(0 + x, 0 + y, 0), new Vector3f(
 						0 + x, 1 + y, 0), new Vector3f(1 + x, 0 + y, 0),
 						new Vector3f(1 + x, 1 + y, 0), uvmin, uvmax, color);
@@ -206,8 +220,8 @@ public class Game implements Runnable {
 
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState() == true) {
-				if(Keyboard.getEventKey() == kbl.get("reset")) {
-					rotation = new Vector3f(0,0,0);
+				if (Keyboard.getEventKey() == kbl.get("reset")) {
+					rotation = new Vector3f(0, 0, 0);
 				}
 			}
 			if (Keyboard.getEventKey() == Keyboard.KEY_P) {
@@ -300,7 +314,7 @@ public class Game implements Runnable {
 		for (int x = 0; x < dim; x++)
 			for (int y = 0; y < dim; y++) {
 				if (Math.random() > 0.9) {
-					level[x + y * dim] = 2;
+					level[x + y * dim] = 1;
 
 					/*
 					 * normalBuffer.add(new Vector3f(0.f + x, 0.f, 0 + y), new
@@ -329,7 +343,7 @@ public class Game implements Runnable {
 					 */
 
 				} else {
-					level[x + y * dim] = 1;
+					level[x + y * dim] = 2;
 
 					/*
 					 * normalBuffer.add(new Vector3f(0.f + x, 0.f, 0 + y), new
