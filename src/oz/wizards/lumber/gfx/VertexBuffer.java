@@ -28,6 +28,8 @@ public class VertexBuffer {
 	private int mCamUniform = 0;
 	private int mPositionAttrib = 0;
 	private int mTexcoordAttrib = 0;
+	private int mIdAttrib = 0;
+	private int currentId = 0;
 	private int mTexUniform = 0;
 	private int mVertexCount = 0;
 	private int mMaxVertexCount = 10;
@@ -41,9 +43,10 @@ public class VertexBuffer {
 		shader = s;
 		texture = tex;
 		//buffer = ByteBuffer.allocateDirect((3*4) * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-		buffer = ByteBuffer.allocateDirect(mMaxVertexCount * ((3*4)+(2*4))).order(ByteOrder.nativeOrder());
+		buffer = ByteBuffer.allocateDirect(mMaxVertexCount * ((3*4)+(2*4)+4)).order(ByteOrder.nativeOrder());
 		mPositionAttrib = s.getAttributeLocation("position");
 		mTexcoordAttrib = s.getAttributeLocation("texcoord");
+		mIdAttrib = s.getAttributeLocation("id");
 		mTexUniform = s.getUniformLocation("texture");
 		mCamUniform = s.getUniformLocation("cam");
 		glUniform1i(mTexUniform, 0);
@@ -54,20 +57,29 @@ public class VertexBuffer {
 	/**
 	 * Uses GL_QUADS, order is CCW (Counter Clockwise) example
 	 * 
-	 * 0----1
+	 * 0----3
 	 * |    |
 	 * |    |
-	 * 3----2
+	 * 1----2
+	 * 
+	 *  		
+	 *  	    A +y
+	 *  		|
+	 *  		|
+	 *  -x -------------> +x
+	 *  		|
+	 *  		|
+	 *  		v -y
 	 * 
 	 * @param v The current vertex
 	 */
-	public void add(Vector3f v, Vector2f texc) {
+	public void add(Vector3f v, Vector2f texc, float id) {
 		if(mVertexCount == mMaxVertexCount) {
 			mMaxVertexCount *= 2;
 			//FloatBuffer newbb = ByteBuffer.allocateDirect((mMaxVertexCount * (3*4))).order(ByteOrder.nativeOrder()).asFloatBuffer();
 			//newbb.put(buffer);
 			//buffer = newbb;
-			ByteBuffer newbb = ByteBuffer.allocateDirect(mMaxVertexCount * ((3*4)+(2*4))).order(ByteOrder.nativeOrder());
+			ByteBuffer newbb = ByteBuffer.allocateDirect(mMaxVertexCount * ((3*4)+(2*4)+4)).order(ByteOrder.nativeOrder());
 			buffer.flip();
 			//buffer.rewind();
 			newbb.put(buffer);
@@ -81,6 +93,7 @@ public class VertexBuffer {
 		buffer.putFloat(v.z);
 		buffer.putFloat((1.f / (float)texture.width) * texc.x);
 		buffer.putFloat((1.f / (float)texture.height) * texc.y);
+		buffer.putFloat(id);
 	}
 	
 	public void upload() throws IOException{
@@ -120,8 +133,9 @@ public class VertexBuffer {
 		glEnableVertexAttribArray(mPositionAttrib);
 		glEnableVertexAttribArray(mTexcoordAttrib);
 		glBindBuffer(GL_ARRAY_BUFFER, mVboid);
-		glVertexAttribPointer(mPositionAttrib, 3, GL_FLOAT, false, (3*4)+(2*4), 0);
-		glVertexAttribPointer(mTexcoordAttrib, 2, GL_FLOAT, false, (3*4)+(2*4), (3*4));
+		glVertexAttribPointer(mPositionAttrib, 3, GL_FLOAT, false, (3*4)+(2*4)+4, 0);
+		glVertexAttribPointer(mTexcoordAttrib, 2, GL_FLOAT, false, (3*4)+(2*4)+4, (3*4));
+		glVertexAttribPointer(mIdAttrib, 1, GL_FLOAT, false, (3*4)+(2*4)+4, (3*4)+(2*4));
 		glDrawArrays(dataType, 0, mMaxVertexCount);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}

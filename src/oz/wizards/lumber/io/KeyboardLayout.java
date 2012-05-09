@@ -44,6 +44,7 @@ public class KeyboardLayout {
 	
 	private void loadDefaultMapping () {
 		this.add("forward", Keyboard.KEY_W);
+		this.add("reset", Keyboard.KEY_R);
 	}
 
 	private void loadFromFile() {
