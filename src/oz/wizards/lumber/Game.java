@@ -145,16 +145,14 @@ public class Game implements Runnable {
 					uvmax.x = 15;
 					uvmax.y = 47;
 				}
-				Rectangle2f r = new Rectangle2f(new Vector2f(x
-						- Display.getWidth(), y - Display.getHeight()),
-						new Vector2f(x + 1 - Display.getWidth(), y + 1 - Display.getHeight()));
-				if (r.isInside(new Vector2f(m.x, m.y))) {
+				Rectangle2f r = new Rectangle2f(new Vector2f(x, y), new Vector2f(x + 1, y + 1));
+				if (r.contains(new Vector2f((m.x - Display.getWidth()/2)*(0.08f / 2.f)+translation.x,
+						(m.y - Display.getHeight()/2)*(0.08f / 2.f)+translation.y))) {
 					color = new Vector3f(1, 0, 0);
-					System.out.println("comparematch");
 				} else {
-					color = new Vector3f(0, 1, 0);
+					color = new Vector3f(1, 1, 1);
 				}
-				// System.out.println("m(" + m.x + "|" + m.y + "), " + " r(min("
+				// System.ougt.println("m(" + m.x + "|" + m.y + "), " + " r(min("
 				// + r.min.x + "|" + r.min.y + "), max(" + r.max.x + "|" +
 				// r.max.y + ")");
 
@@ -163,7 +161,6 @@ public class Game implements Runnable {
 						new Vector3f(1 + x, 1 + y, 0), uvmin, uvmax, color);
 			}
 		}
-
 		normalShader.enable();
 		// normalBuffer.render(GL_QUADS, translation);
 		// entityBuffer.render(GL_QUADS, translation);

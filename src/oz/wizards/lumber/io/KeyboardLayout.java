@@ -17,7 +17,6 @@ public class KeyboardLayout {
 	private String filename = "keyboardlayout.txt";
 	
 	public KeyboardLayout () {
-		
 	}
 
 	public KeyboardLayout(String filename) {
