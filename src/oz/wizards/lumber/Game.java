@@ -32,6 +32,7 @@ public class Game implements Runnable {
 
 	public Vector3f translation = new Vector3f();
 	public Vector3f rotation = new Vector3f();
+	public Vector3f scale = new Vector3f(1,1,1);
 
 	private boolean loop = true;
 
@@ -95,7 +96,7 @@ public class Game implements Runnable {
 
 		glRotatef(rotation.x, 1.f, 0.f, 0.f);
 		glRotatef(rotation.y, 0.f, 1.f, 0.f);
-		glScalef(.08f, .08f, 1.f);
+		glScalef(scale.x, scale.y, scale.z);
 		glTranslatef(-translation.x, -translation.y, -translation.z);
 
 		/*
@@ -132,6 +133,7 @@ public class Game implements Runnable {
 		Vector2f uvmin = new Vector2f(0, 0);
 		Vector2f uvmax = new Vector2f(0, 0);
 		Vector3f color = new Vector3f(1, 1, 1);
+		Rectangle2f r;
 		for (int x = 0; x < dim; x++) {
 			for (int y = 0; y < dim; y++) {
 				if (level[x + y * dim] == 1) {
@@ -145,7 +147,7 @@ public class Game implements Runnable {
 					uvmax.x = 15;
 					uvmax.y = 47;
 				}
-				Rectangle2f r = new Rectangle2f(new Vector2f(x, y), new Vector2f(x + 1, y + 1));
+				r = new Rectangle2f(new Vector2f(x, y), new Vector2f(x + 1, y + 1));
 				if (r.contains(new Vector2f((m.x - Display.getWidth()/2)*(0.08f / 2.f)+translation.x,
 						(m.y - Display.getHeight()/2)*(0.08f / 2.f)+translation.y))) {
 					color = new Vector3f(1, 0, 0);
@@ -200,6 +202,17 @@ public class Game implements Runnable {
 				translation.x += vel;
 			}
 		}
+		
+		if(Mouse.next()) { 
+			int md = Mouse.getDWheel();
+			if(md > 0) {
+				scale.x *= 1.1f;
+				scale.y *= 1.1f;
+			} else if (md < 0) {
+				scale.x *= 0.9f;
+				scale.y *= 0.9f;
+			}
+		}
 
 		float vel = 1.f;
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
@@ -246,6 +259,7 @@ public class Game implements Runnable {
 				System.out.print(obj_pos.get(0) + ", ");
 				System.out.print(obj_pos.get(1) + ", ");
 				System.out.print(obj_pos.get(2) + "\n");
+				System.out.println("Scale(" + scale.toString() + ")");
 			}
 		}
 		// System.out.println("" + rotation.y);
