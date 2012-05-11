@@ -32,7 +32,7 @@ public class Game implements Runnable {
 
 	public Vector3f translation = new Vector3f();
 	public Vector3f rotation = new Vector3f();
-	public Vector3f scale = new Vector3f(1,1,1);
+	public Vector3f scale = new Vector3f(1, 1, 1);
 
 	private boolean loop = true;
 
@@ -148,8 +148,9 @@ public class Game implements Runnable {
 					uvmax.y = 47;
 				}
 				r = new Rectangle2f(new Vector2f(x, y), new Vector2f(x + 1, y + 1));
-				if (r.contains(new Vector2f((m.x - Display.getWidth()/2)*(0.08f / 2.f)+translation.x,
-						(m.y - Display.getHeight()/2)*(0.08f / 2.f)+translation.y))) {
+				if (r.contains(new Vector2f(
+						((Display.getWidth()/2*scale.x) * ((m.x-Display.getWidth()/2)*scale.x)),
+						y+0.5f))) {
 					color = new Vector3f(1, 0, 0);
 				} else {
 					color = new Vector3f(1, 1, 1);
@@ -202,10 +203,10 @@ public class Game implements Runnable {
 				translation.x += vel;
 			}
 		}
-		
-		if(Mouse.next()) { 
+
+		if (Mouse.next()) {
 			int md = Mouse.getDWheel();
-			if(md > 0) {
+			if (md > 0) {
 				scale.x *= 1.1f;
 				scale.y *= 1.1f;
 			} else if (md < 0) {
@@ -231,7 +232,7 @@ public class Game implements Runnable {
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState() == true) {
 				if (Keyboard.getEventKey() == kbl.get("reset")) {
-					rotation = new Vector3f(0, 0, 0);
+					rotation = translation = new Vector3f(0, 0, 0);
 				}
 			}
 			if (Keyboard.getEventKey() == Keyboard.KEY_P) {
