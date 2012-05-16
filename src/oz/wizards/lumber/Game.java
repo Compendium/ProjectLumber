@@ -133,6 +133,10 @@ public class Game implements Runnable {
 		Vector2f uvmin = new Vector2f(0, 0);
 		Vector2f uvmax = new Vector2f(0, 0);
 		Vector3f color = new Vector3f(1, 1, 1);
+		float ratio = (float)800 / (float)600;
+		Vector2f c = new Vector2f(
+			(1.f/((1.f/ratio)*(Display.getWidth()/2)*scale.x)) * (m.x-Display.getWidth()/2) + translation.x,
+			(1.f/((Display.getHeight()/2)*scale.y)) * (m.y-Display.getHeight()/2) + translation.y);
 		Rectangle2f r;
 		for (int x = 0; x < dim; x++) {
 			for (int y = 0; y < dim; y++) {
@@ -146,11 +150,11 @@ public class Game implements Runnable {
 					uvmin.y = 32;
 					uvmax.x = 15;
 					uvmax.y = 47;
+				} else if(level[x+y*dim] == -1) {
+					continue;
 				}
 				r = new Rectangle2f(new Vector2f(x, y), new Vector2f(x + 1, y + 1));
-				if (r.contains(new Vector2f(
-						((Display.getWidth()/2*scale.x) * ((m.x-Display.getWidth()/2)*scale.x)),
-						y+0.5f))) {
+				if(r.contains(c)) {
 					color = new Vector3f(1, 0, 0);
 				} else {
 					color = new Vector3f(1, 1, 1);

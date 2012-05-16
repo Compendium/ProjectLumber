@@ -81,7 +81,6 @@ public class VertexBatch {
 			ti.vertexCount = 0;
 			ti.maxQuads = 1;
 			mVertexMap.put(tex.texId, ti);
-			System.out.println("reallocating 1");
 		}
 		
 		if(mVertexMap.get(tex.texId).vertexCount / 6 >= mVertexMap.get(tex.texId).maxQuads)
@@ -92,7 +91,6 @@ public class VertexBatch {
 			currentBuffer.flip();
 			newbuffer.put(currentBuffer);
 			mVertexMap.get(tex.texId).vertices = newbuffer;
-			System.out.println("reallocating 2");
 		}
 		
 		Vector2f realuvmin = new Vector2f((float)(1./tex.width*uvmin.x), (float)(1./tex.height*uvmin.y));
