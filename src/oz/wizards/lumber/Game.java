@@ -45,8 +45,7 @@ public class Game implements Runnable {
 	long deltaTime = 0;
 	long lastPrinted = 0;
 
-	private static final int dim = 64;
-	byte[] level = new byte[dim * dim];
+	Level level = new Level();
 	Shader normalShader;
 	Shader billboardShader;
 	VertexBuffer normalBuffer;
@@ -132,36 +131,44 @@ public class Game implements Runnable {
 		Vector2f offset = new Vector2f(0, 0);
 		Vector2f uvmin = new Vector2f(0, 0);
 		Vector2f uvmax = new Vector2f(0, 0);
+		Vector2f bguvmin = new Vector2f(0, 32);
+		Vector2f bguvmax = new Vector2f(15, 47);
 		Vector3f color = new Vector3f(1, 1, 1);
-		float ratio = (float)800 / (float)600;
-		Vector2f c = new Vector2f(
-			(1.f/((1.f/ratio)*(Display.getWidth()/2)*scale.x)) * (m.x-Display.getWidth()/2) + translation.x,
-			(1.f/((Display.getHeight()/2)*scale.y)) * (m.y-Display.getHeight()/2) + translation.y);
+		float ratio = (float) 800 / (float) 600;
+		Vector2f c = new Vector2f((1.f / ((1.f / ratio)
+				* (Display.getWidth() / 2) * scale.x))
+				* (m.x - Display.getWidth() / 2) + translation.x,
+				(1.f / ((Display.getHeight() / 2) * scale.y))
+						* (m.y - Display.getHeight() / 2) + translation.y);
 		Rectangle2f r;
-		for (int x = 0; x < dim; x++) {
-			for (int y = 0; y < dim; y++) {
-				if (level[x + y * dim] == 1) {
-					uvmin.x = 0;
+		for (int x = 0; x < level.dim; x++) {
+			for (int y = 0; y < level.dim; y++) {
+				// grass-background
+				vb.putQuad(tex, new Vector3f(0 + x, 0 + y, -.1f), new Vector3f(
+						0 + x, 1 + y, -.1f), new Vector3f(1 + x, 0 + y, -.1f),
+						new Vector3f(1 + x, 1 + y, -.1f), bguvmin, bguvmax,
+						new Vector3f(1, 1, 1));
+
+				if (level.get(x, y) == Level.FOREST) {
+					uvmin.x = 0 + 16;
+					uvmin.y = 0;
+					uvmax.x = 15 + 16;
+					uvmax.y = 16;
+				} else if (level.get(x, y) == Level.VILLAGE) {
+					uvmin.x = 0 + 16;
 					uvmin.y = 16;
-					uvmax.x = 15;
-					uvmax.y = 31;
-				} else if (level[x + y * dim] == 2) {
-					uvmin.x = 0;
-					uvmin.y = 32;
-					uvmax.x = 15;
-					uvmax.y = 47;
-				} else if(level[x+y*dim] == -1) {
+					uvmax.x = 15 + 16;
+					uvmax.y = 32;
+				} else if (level.get(x, y) == Level.NOTHING) {
 					continue;
 				}
-				r = new Rectangle2f(new Vector2f(x, y), new Vector2f(x + 1, y + 1));
-				if(r.contains(c)) {
+				r = new Rectangle2f(new Vector2f(x, y), new Vector2f(x + 1,
+						y + 1));
+				if (r.contains(c)) {
 					color = new Vector3f(1, 0, 0);
 				} else {
 					color = new Vector3f(1, 1, 1);
 				}
-				// System.ougt.println("m(" + m.x + "|" + m.y + "), " + " r(min("
-				// + r.min.x + "|" + r.min.y + "), max(" + r.max.x + "|" +
-				// r.max.y + ")");
 
 				vb.putQuad(tex, new Vector3f(0 + x, 0 + y, 0), new Vector3f(
 						0 + x, 1 + y, 0), new Vector3f(1 + x, 0 + y, 0),
@@ -193,19 +200,27 @@ public class Game implements Runnable {
 			if (rotation.x < -90.0f)
 				rotation.x = -90.0f;
 		}
-		// if (Mouse.isButtonDown(0)) {
-		{
-			float vel = 0.1f;
-			if (m.y < Display.getHeight() / 10) {
-				translation.y += -vel;
-			} else if (m.y > (Display.getHeight() / 10) * 9) {
-				translation.y += vel;
-			}
-			if (m.x < Display.getWidth() / 10) {
-				translation.x -= vel;
-			} else if (m.x > (Display.getWidth() / 10) * 9) {
-				translation.x += vel;
-			}
+		if (Mouse.isButtonDown(0)) {
+			float ratio = (float) 800 / (float) 600;
+			Vector2f c = new Vector2f((1.f / ((1.f / ratio)
+					* (Display.getWidth() / 2) * scale.x))
+					* (m.x - Display.getWidth() / 2) + translation.x,
+					(1.f / ((Display.getHeight() / 2) * scale.y))
+							* (m.y - Display.getHeight() / 2) + translation.y);
+			level.set((int) Math.floor(c.x), (int) Math.floor(c.y), (byte) -1);
+
+		}
+
+		float vel = 0.1f;
+		if (m.y < Display.getHeight() / 10) {
+			translation.y += -vel;
+		} else if (m.y > (Display.getHeight() / 10) * 9) {
+			translation.y += vel;
+		}
+		if (m.x < Display.getWidth() / 10) {
+			translation.x -= vel;
+		} else if (m.x > (Display.getWidth() / 10) * 9) {
+			translation.x += vel;
 		}
 
 		if (Mouse.next()) {
@@ -219,18 +234,18 @@ public class Game implements Runnable {
 			}
 		}
 
-		float vel = 1.f;
+		float velTranslation = 1.f;
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			translation.z -= vel;
+			translation.z -= velTranslation;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			translation.z += vel;
+			translation.z += velTranslation;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			translation.x -= vel;
+			translation.x -= velTranslation;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			translation.x += vel;
+			translation.x += velTranslation;
 		}
 
 		while (Keyboard.next()) {
@@ -274,6 +289,7 @@ public class Game implements Runnable {
 		try {
 			Display.setDisplayMode(new DisplayMode(800, 600));
 			Display.create();
+			Display.setTitle("Tiny World");
 			// Display.setLocation(-1680, 0);
 
 			// init OpenGL
@@ -322,61 +338,16 @@ public class Game implements Runnable {
 		entityBuffer = new VertexBuffer(normalShader, tex);
 		vb = new VertexBatch(normalShader);
 
-		// normalBuffer.add(new Vector3f(0, 0, +0.f), new Vector2f(0, 0), 1);
-		// normalBuffer.add(new Vector3f(0, 1, +0.f), new Vector2f(0, 1), 1);
-		// normalBuffer.add(new Vector3f(1, 1, +0.f), new Vector2f(1, 1), 1);
-		// normalBuffer.add(new Vector3f(1, 0, +0.f), new Vector2f(1, 0), 1);
+		for (int x = 0; x < level.dim; x++)
+			for (int y = 0; y < level.dim; y++) {
+				if (Math.random() > 0.985) {
+					level.set(x, y, Level.VILLAGE);
 
-		for (int x = 0; x < dim; x++)
-			for (int y = 0; y < dim; y++) {
-				if (Math.random() > 0.9) {
-					level[x + y * dim] = 1;
-
-					/*
-					 * normalBuffer.add(new Vector3f(0.f + x, 0.f, 0 + y), new
-					 * Vector2f(0.f, 16.f), x); normalBuffer.add(new
-					 * Vector3f(1.f + x, 0.f, 0 + y), new Vector2f(15.f, 16.f),
-					 * x); normalBuffer.add(new Vector3f(1.f + x, 0.f, 1 + y),
-					 * new Vector2f(15.f, 31.f), x); normalBuffer.add(new
-					 * Vector3f(0.f + x, 0.f, 1 + y), new Vector2f(0.f, 31.f),
-					 * x);
-					 * 
-					 * entityBuffer.add(new Vector3f(0.f + x, 1.f, 0 + y), new
-					 * Vector2f(0.f, 0.f), x); entityBuffer.add(new Vector3f(1.f
-					 * + x, 1.f, 1 + y), new Vector2f(16.f, 0.f), x);
-					 * entityBuffer.add(new Vector3f(1.f + x, 0.f, 1 + y), new
-					 * Vector2f(16.f, 16.f), x); entityBuffer.add(new
-					 * Vector3f(0.f + x, 0.f, 0 + y), new Vector2f(0.f, 16.f),
-					 * x);
-					 * 
-					 * entityBuffer.add(new Vector3f(0.f + x, 1.f, 1 + y), new
-					 * Vector2f(0.f, 0.f), x); entityBuffer.add(new Vector3f(1.f
-					 * + x, 1.f, 0 + y), new Vector2f(16.f, 0.f), x);
-					 * entityBuffer.add(new Vector3f(1.f + x, 0.f, 0 + y), new
-					 * Vector2f(16.f, 16.f), x); entityBuffer.add(new
-					 * Vector3f(0.f + x, 0.f, 1 + y), new Vector2f(0.f, 16.f),
-					 * x);
-					 */
-
+				} else if (Math.random() < 0.4) {
+					level.set(x, y, Level.FOREST);
 				} else {
-					level[x + y * dim] = 2;
-
-					/*
-					 * normalBuffer.add(new Vector3f(0.f + x, 0.f, 0 + y), new
-					 * Vector2f(0.f, 32.f), x); normalBuffer.add(new
-					 * Vector3f(1.f + x, 0.f, 0 + y), new Vector2f(15.f, 32.f),
-					 * x); normalBuffer.add(new Vector3f(1.f + x, 0.f, 1 + y),
-					 * new Vector2f(15.f, 47.f), x); normalBuffer.add(new
-					 * Vector3f(0.f + x, 0.f, 1 + y), new Vector2f(0.f, 47.f),
-					 * x);
-					 */
+					level.set(x, y, Level.NOTHING);
 				}
 			}
-
-		/*
-		 * try { normalBuffer.upload(); entityBuffer.upload(); } catch
-		 * (IOException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); }
-		 */
 	}
 }
