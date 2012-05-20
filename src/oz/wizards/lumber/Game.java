@@ -44,6 +44,7 @@ public class Game implements Runnable {
 	Vec2 m = new Vec2();
 	long deltaTime = 0;
 	long lastPrinted = 0;
+	long lastTicked = 0;
 
 	Level level = new Level();
 	Shader normalShader;
@@ -140,50 +141,77 @@ public class Game implements Runnable {
 				* (m.x - Display.getWidth() / 2) + translation.x,
 				(1.f / ((Display.getHeight() / 2) * scale.y))
 						* (m.y - Display.getHeight() / 2) + translation.y);
-		Rectangle2f r;
-		for (int x = 0; x < level.dim; x++) {
-			for (int y = 0; y < level.dim; y++) {
+		Rectangle2f r = new Rectangle2f(new Vector2f(), new Vector2f());
+		//for (int x = 0; x < Level.dim; x++) {
+			//for (int y = 0; y < Level.dim; y++) {
 				// grass-background
-				vb.putQuad(tex, new Vector3f(0 + x, 0 + y, -.1f), new Vector3f(
-						0 + x, 1 + y, -.1f), new Vector3f(1 + x, 0 + y, -.1f),
-						new Vector3f(1 + x, 1 + y, -.1f), bguvmin, bguvmax,
-						new Vector3f(1, 1, 1));
+				//vb.putQuad(tex, new Vector3f(0 + x, 0 + y, -.1f), new Vector3f(
+						//0 + x, 1 + y, -.1f), new Vector3f(1 + x, 0 + y, -.1f),
+						//new Vector3f(1 + x, 1 + y, -.1f), bguvmin, bguvmax,
+						//new Vector3f(1, 1, 1));
 
-				if (level.get(x, y) == Level.FOREST) {
-					uvmin.x = 0 + 16;
-					uvmin.y = 0;
-					uvmax.x = 15 + 16;
-					uvmax.y = 16;
-				} else if (level.get(x, y) == Level.VILLAGE) {
-					uvmin.x = 0 + 16;
-					uvmin.y = 16;
-					uvmax.x = 15 + 16;
-					uvmax.y = 32;
-				} else if (level.get(x, y) == Level.NOTHING) {
-					continue;
-				}
-				r = new Rectangle2f(new Vector2f(x, y), new Vector2f(x + 1,
-						y + 1));
-				if (r.contains(c)) {
-					color = new Vector3f(1, 0, 0);
-				} else {
-					color = new Vector3f(1, 1, 1);
-				}
+				//r = new Rectangle2f(new Vector2f(x, y), new Vector2f(x + 1,
+						//y + 1));
+//				r.min.x = x;
+//				r.min.y = y;
+//				r.max.x = x+1;
+//				r.max.y = y+1;
+				
+//				if (r.contains(c)) {
+//					color.x = 1;
+//					color.y = color.z = 0;
+//				} else {
+//					color.x = color.y = color.z = 1;
+//				}
 
-				vb.putQuad(tex, new Vector3f(0 + x, 0 + y, 0), new Vector3f(
-						0 + x, 1 + y, 0), new Vector3f(1 + x, 0 + y, 0),
-						new Vector3f(1 + x, 1 + y, 0), uvmin, uvmax, color);
-			}
-		}
+//				if (level.get(x, y) == Level.FOREST) {
+//					uvmin.x = 0 + 16;
+//					uvmin.y = 0;
+//					uvmax.x = 15 + 16;
+//					uvmax.y = 16;
+//				} else if (level.get(x, y) == Level.VILLAGE) {
+//					uvmin.x = 0 + 16;
+//					uvmin.y = 16;
+//					uvmax.x = 15 + 16;
+//					uvmax.y = 32;
+//				} else if (level.get(x, y) == Level.VILLAGE_DESTROYED) {
+//					uvmin.x = 0 + 16;
+//					uvmin.y = 16+16;
+//					uvmax.x = 15 + 16;
+//					uvmax.y = 32+16;
+//					//color = new Vector3f(1, 0, 0);
+//				} else if (level.get(x, y) == Level.NOTHING) {
+//					continue;
+//				} else {
+//					continue;
+//				}
+				
+//				uvmin.x = 16;
+//				uvmin.y = 0 + 16*level.get(x,y);
+//				uvmax.x = 15+16;
+//				uvmax.y = 16 + 16*level.get(x,y);
+//
+//				vb.putQuad(tex, new Vector3f(0 + x, 0 + y, 0), new Vector3f(
+//						0 + x, 1 + y, 0), new Vector3f(1 + x, 0 + y, 0),
+//						new Vector3f(1 + x, 1 + y, 0), uvmin, uvmax, color);
+			//}
+		//}
 		normalShader.enable();
 		// normalBuffer.render(GL_QUADS, translation);
 		// entityBuffer.render(GL_QUADS, translation);
 		vb.render();
+		level.render();
 		normalShader.disable();
 		glPopMatrix();
 	}
 
 	private void tick() {
+		if (lastTicked < System.nanoTime()) {
+			lastTicked = System.nanoTime() + 1000000000L;
+			level.tick();
+			System.out.println("ticked");
+		}
+
 		diffx = Mouse.getX() - prevx;
 		diffy = Mouse.getY() - prevy;
 		prevx = Mouse.getX();
@@ -207,7 +235,7 @@ public class Game implements Runnable {
 					* (m.x - Display.getWidth() / 2) + translation.x,
 					(1.f / ((Display.getHeight() / 2) * scale.y))
 							* (m.y - Display.getHeight() / 2) + translation.y);
-			level.set((int) Math.floor(c.x), (int) Math.floor(c.y), (byte) -1);
+			level.set((int) Math.floor(c.x), (int) Math.floor(c.y), (byte) 0);
 
 		}
 
@@ -338,16 +366,6 @@ public class Game implements Runnable {
 		entityBuffer = new VertexBuffer(normalShader, tex);
 		vb = new VertexBatch(normalShader);
 
-		for (int x = 0; x < level.dim; x++)
-			for (int y = 0; y < level.dim; y++) {
-				if (Math.random() > 0.985) {
-					level.set(x, y, Level.VILLAGE);
-
-				} else if (Math.random() < 0.4) {
-					level.set(x, y, Level.FOREST);
-				} else {
-					level.set(x, y, Level.NOTHING);
-				}
-			}
+		level.init(normalShader, tex);
 	}
 }

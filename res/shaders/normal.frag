@@ -7,7 +7,7 @@ varying vec4 vertColor;
 void main() {
 	//gl_FragColor = vertColor;
 	vec4 c = texture2D(texture, vertTexcoord);
-	c *= vertColor;
+	//c *= vertColor;
 	//vec4 c = vertColor;
 	
 	//if(c.a == 0.0f)
