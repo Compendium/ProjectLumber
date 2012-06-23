@@ -29,8 +29,8 @@ public class Level {
 	private byte[] data = new byte[dim * dim];
 
 	public void tick() {
-		dim = 63;
-		for (int x = 0; x < level.length; x++) {
+		//dim = 63;
+		/*for (int x = 0; x < level.length; x++) {
 			for (int y = 0; y < level.length; y++) {
 				if (getData(x, y) != 127) {
 					setData(x, y, (byte) (getData(x, y) + 1));
@@ -44,59 +44,56 @@ public class Level {
 		}
 		for (int x = 1; x < level.length - 1; x++) {
 			for (int y = 1; y < level.length - 1; y++) {
-				if (get(x, y) == Level.VILLAGE
-						&& getData(x, y) == 4
-						&& (get(x - 1, y) == Level.VILLAGE
-								|| get(x, y - 1) == Level.VILLAGE
-								|| get(x - 1, y - 1) == Level.VILLAGE
-								|| get(x + 1, y) == Level.VILLAGE
-								|| get(x, y + 1) == Level.VILLAGE || get(x + 1,
-								y + 1) == Level.VILLAGE)) {
+				if (get(x, y) == Level.VILLAGE && getData(x, y) == 4
+						&& (get(x - 1, y) == Level.VILLAGE)) {
+					// || get(x, y - 1) == Level.VILLAGE
+					// || get(x - 1, y - 1) == Level.VILLAGE
+					// || get(x + 1, y) == Level.VILLAGE
+					// || get(x, y + 1) == Level.VILLAGE
+					// || get(x + 1, y + 1) == Level.VILLAGE
+					// || get(x + 1, y - 1) == Level.VILLAGE
+					// || get(x - 1, y + 1) == Level.VILLAGE)) {
 					set(x, y, Level.VILLAGE_DESTROYED);
 					setData(x, y, (byte) 0);
 				}
 			}
-		}
+		}*/
 	}
 
 	public void set(int x, int y, byte v) {
-		if (x < 0 || y < 0 || x > dim || y > dim) {
-			// System.out
-			// .println("Error while set'ting in Level.java (out of bounds)");
+		if (x < 0 || y < 0 || x >= dim || y >= dim) {
+			 System.out
+			 .println("Error while set'ting in Level.java (out of bounds)");
 			return;
 		}
 		level[x + y * dim] = v;
 		Vector2f uvmin = new Vector2f(), uvmax = new Vector2f();
 		if (v == Level.FOREST) {
 			uvmin.x = 0 + 16;
-			uvmin.y = 0;
+			uvmin.y = 0 + 16*0;
 			uvmax.x = 15 + 16;
-			uvmax.y = 16;
+			uvmax.y = 16 + 16*0;
 		} else if (v == Level.VILLAGE) {
 			uvmin.x = 0 + 16;
-			uvmin.y = 16;
+			uvmin.y = 0 + 16*1;
 			uvmax.x = 15 + 16;
-			uvmax.y = 32;
+			uvmax.y = 16 + 16*1;
 		} else if (v == Level.VILLAGE_DESTROYED) {
 			uvmin.x = 0 + 16;
-			uvmin.y = 16 + 16;
+			uvmin.y = 0 + 16*2;
 			uvmax.x = 15 + 16;
-			uvmax.y = 32 + 16;
+			uvmax.y = 16 + 16*2;;
 			// color = new Vector3f(1, 0, 0);
 		} else {
-			//putQuad((x + y * dim) * 6, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0),
-					//new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), uvmin, uvmax);
-			//return;
+			putQuad((x + y * dim) * 6 * 5, new Vector3f(0, 0, 0), new Vector3f(0,
+					0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector2f(0,0),
+					new Vector2f(0,0));
+			return;
 		}
 
-		uvmin.x = 16;
-		uvmin.y = 0 + 16 * v;
-		uvmax.x = 15 + 16;
-		uvmax.y = 16 + 16 * v;
-
-		putQuad((x + y * dim) * 6 * 5, new Vector3f(0 + x, 0 + y, 0), new Vector3f(0 + x,
-				1 + y, 0), new Vector3f(1 + x, 0 + y, 0), new Vector3f(1 + x,
-				1 + y, 0), uvmin, uvmax);
+		putQuad((x + y * dim) * 6 * 5, new Vector3f(0 + x, 0 + y, 0),
+				new Vector3f(0 + x, 1 + y, 0), new Vector3f(1 + x, 0 + y, 0),
+				new Vector3f(1 + x, 1 + y, 0), uvmin, uvmax);
 	}
 
 	public byte get(int x, int y) {
@@ -127,14 +124,9 @@ public class Level {
 	}
 
 	private Shader shader;
-	private int mVboid = -1;
-	private int mCamUniform = 0;
 	private int mPositionAttrib = 0;
 	private int mTexcoordAttrib = 0;
-	private int mIdAttrib = 0;
-	private int currentId = 0;
 	private int mTexUniform = 0;
-	private int mVertexCount = 0;
 	private int mMaxVertexCount = (dim * dim) * 6;
 	private static final int FLOAT_SIZE_BYTES = 4;
 	private static final int TRIANGLE_VERTICES_DATA_STRIDE_BYTES = (3 + 2)
@@ -142,7 +134,7 @@ public class Level {
 	private static final int TRIANGLE_VERTICES_DATA_POS_OFFSET = 0;
 	private static final int TRIANGLE_VERTICES_DATA_UV_OFFSET = 3;
 	private Texture texture;
-	private FloatBuffer buffer;
+	public FloatBuffer buffer;
 
 	public void putQuad(int startIndex, Vector3f a, Vector3f b, Vector3f c,
 			Vector3f d, Vector2f uvmin, Vector2f uvmax) {
@@ -192,10 +184,9 @@ public class Level {
 		for (int x = 0; x < dim; x++)
 			for (int y = 0; y < dim; y++) {
 				if (Math.random() > 0.285) {
-					set(x, y, Level.VILLAGE);
-
-				} else if (Math.random() < 0.4) {
 					set(x, y, Level.FOREST);
+				} else if (Math.random() < 0.4) {
+					set(x, y, Level.VILLAGE);
 				} else {
 					set(x, y, Level.NOTHING);
 				}

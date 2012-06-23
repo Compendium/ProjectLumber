@@ -100,7 +100,6 @@ public class VertexBatch {
 		//addTriangle(mVertexMap.get(texid), c, b, d, rgb);
 		TextureInfo ti = mVertexMap.get(tex.texId);
 		
-		Vector3f r = new Vector3f(1,0,0);
 		addVertex(ti, a, rgb, new Vector2f(realuvmin.x, realuvmax.y)); //lower left
 		addVertex(ti, b, rgb, new Vector2f(realuvmin.x, realuvmin.y)); // upper left
 		addVertex(ti, c, rgb, new Vector2f(realuvmax.x, realuvmax.y));//lower right
