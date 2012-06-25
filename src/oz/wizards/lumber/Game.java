@@ -18,6 +18,7 @@ import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import oz.wizards.lumber.gfx.ParticleEngine;
 import oz.wizards.lumber.gfx.Shader;
 import oz.wizards.lumber.gfx.Texture;
 import oz.wizards.lumber.gfx.VertexBatch;
@@ -42,7 +43,7 @@ public class Game implements Runnable {
 
 	int prevx = -1, prevy = -1;
 	int diffy = 0, diffx = 0;
-	Vec2 m = new Vec2();
+	Vector2f m = new Vector2f();
 	long deltaTime = 0;
 	long lastPrinted = 0;
 	long lastTicked = 0;
@@ -52,9 +53,10 @@ public class Game implements Runnable {
 	Shader billboardShader;
 	VertexBuffer normalBuffer;
 	VertexBuffer entityBuffer;
+	ParticleEngine particleEngine;
 	
 	boolean houseSelected = false;
-	Vec2 housePosition = new Vec2(-1,-1);
+	Vector2f housePosition = new Vector2f(-1,-1);
 	long houseSelectedTimestamp = 0;
 
 	KeyboardLayout kbl;
@@ -138,7 +140,7 @@ public class Game implements Runnable {
 		Vector2f uvmin = new Vector2f(0, 0);
 		Vector2f uvmax = new Vector2f(0, 0);
 		Vector2f bguvmin = new Vector2f(0, 32);
-		Vector2f bguvmax = new Vector2f(15, 47);
+		Vector2f bguvmax = new Vector2f(16, 48);
 		Vector3f color = new Vector3f(1, 1, 1);
 		float ratio = (float) 800 / (float) 600;
 		Vector2f c = new Vector2f((1.f / ((1.f / ratio)
@@ -214,88 +216,89 @@ public class Game implements Runnable {
 				if(diff < speed*1) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(0, 496), new Vector2f(16,512), new Vector3f(1,1,1));
+							new Vector2f(0, 96), new Vector2f(16,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*2) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(16, 496), new Vector2f(32,512), new Vector3f(1,1,1));
+							new Vector2f(16, 96), new Vector2f(32,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*3) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(32, 496), new Vector2f(48,512), new Vector3f(1,1,1));
+							new Vector2f(32, 96), new Vector2f(48,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*4) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(48, 496), new Vector2f(64,512), new Vector3f(1,1,1));
+							new Vector2f(48, 96), new Vector2f(64,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*5) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(64, 496), new Vector2f(80,512), new Vector3f(1,1,1));
+							new Vector2f(64, 96), new Vector2f(80,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*6) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(80, 496), new Vector2f(96,512), new Vector3f(1,1,1));
+							new Vector2f(80, 96), new Vector2f(96,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*7) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(96, 496), new Vector2f(112,512), new Vector3f(1,1,1));
+							new Vector2f(96, 96), new Vector2f(112,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*8) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(112, 496), new Vector2f(128,512), new Vector3f(1,1,1));
+							new Vector2f(112, 96), new Vector2f(128,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*9) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(128, 496), new Vector2f(144,512), new Vector3f(1,1,1));
+							new Vector2f(0, 112), new Vector2f(16,128), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*10) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(144, 496), new Vector2f(160,512), new Vector3f(1,1,1));
+							new Vector2f(16, 112), new Vector2f(32,128), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*11) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(160, 496), new Vector2f(176,512), new Vector3f(1,1,1));
+							new Vector2f(32, 112), new Vector2f(48,128), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*12) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(176, 496), new Vector2f(192,512), new Vector3f(1,1,1));
+							new Vector2f(48, 112), new Vector2f(64,128), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*13) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(192, 496), new Vector2f(208,512), new Vector3f(1,1,1));
+							new Vector2f(64, 112), new Vector2f(80,128), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*14) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(208, 496), new Vector2f(224,512), new Vector3f(1,1,1));
+							new Vector2f(80, 112), new Vector2f(96,128), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*15) {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(224, 496), new Vector2f(240,512), new Vector3f(1,1,1));
+							new Vector2f(96, 112), new Vector2f(112,128), new Vector3f(1,1,1));
 				}
 				else {
 					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
 							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
-							new Vector2f(240, 496), new Vector2f(256,512), new Vector3f(1,1,1));
+							new Vector2f(112, 112), new Vector2f(128,128), new Vector3f(1,1,1));
 					houseSelectedTimestamp = System.nanoTime();
 				}
 			}
 			
 		}
 		
+		particleEngine.render();
 		
 		normalShader.enable();
 		// normalBuffer.render(GL_QUADS, translation);
@@ -361,6 +364,7 @@ public class Game implements Runnable {
 					houseSelectedTimestamp = System.nanoTime();
 				} else if (level.get(x,y) == Level.FOREST) {
 					System.out.print("LUMBER!\n");
+					particleEngine.add(new Vector3f(x,y,1), new Vector3f(0,0,1), 1.0f, 1, 1, 0.1f);
 				} else if (level.get(x,y) == Level.NOTHING) {
 					houseSelected = false;
 				}
@@ -514,6 +518,7 @@ public class Game implements Runnable {
 		entityBuffer = new VertexBuffer(normalShader, tex);
 		vb = new VertexBatch(normalShader);
 		vbInterface = new VertexBatch(normalShader);
+		particleEngine = new ParticleEngine(tex, vbInterface);
 
 		level.init(normalShader, tex);
 	}

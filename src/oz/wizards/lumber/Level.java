@@ -71,17 +71,17 @@ public class Level {
 		if (v == Level.FOREST) {
 			uvmin.x = 0 + 16;
 			uvmin.y = 0 + 16*0;
-			uvmax.x = 15 + 16;
+			uvmax.x = 16 + 16;
 			uvmax.y = 16 + 16*0;
 		} else if (v == Level.VILLAGE) {
 			uvmin.x = 0 + 16;
 			uvmin.y = 0 + 16*1;
-			uvmax.x = 15 + 16;
+			uvmax.x = 16 + 16;
 			uvmax.y = 16 + 16*1;
 		} else if (v == Level.VILLAGE_DESTROYED) {
 			uvmin.x = 0 + 16;
 			uvmin.y = 0 + 16*2;
-			uvmax.x = 15 + 16;
+			uvmax.x = 16 + 16;
 			uvmax.y = 16 + 16*2;;
 			// color = new Vector3f(1, 0, 0);
 		} else {
@@ -138,12 +138,10 @@ public class Level {
 
 	public void putQuad(int startIndex, Vector3f a, Vector3f b, Vector3f c,
 			Vector3f d, Vector2f uvmin, Vector2f uvmax) {
-		Vector2f realuvmin = new Vector2f(
-				(float) (1. / texture.width * uvmin.x),
-				(float) (1. / texture.height * uvmin.y));
-		Vector2f realuvmax = new Vector2f(
-				(float) (1. / texture.width * uvmax.x),
-				(float) (1. / texture.height * uvmax.y));
+		//Vector2f realuvmin = new Vector2f((float) (1. / texture.width * uvmin.x),(float) (1. / texture.height * uvmin.y));
+		//Vector2f realuvmax = new Vector2f((float) (1. / texture.width * uvmax.x), (float) (1. / texture.height * uvmax.y));
+		Vector2f realuvmin = new Vector2f((float)(1./texture.width*uvmin.x) + (float)(0.1 / texture.width), (float)(1./texture.height*uvmin.y) + (float)(0.1 / texture.height));
+		Vector2f realuvmax = new Vector2f((float)(1./texture.width*uvmax.x) - (float)(0.1 / texture.width), (float)(1./texture.height*uvmax.y) - (float)(0.1 / texture.height));
 
 		addVertex(startIndex + 0 * 5, a, new Vector2f(realuvmin.x, realuvmax.y)); // lower
 																					// left

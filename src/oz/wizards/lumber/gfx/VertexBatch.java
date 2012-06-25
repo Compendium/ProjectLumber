@@ -26,8 +26,8 @@ import oz.wizards.lumber.math.Vec3;
  * @author compendium
  */
 public class VertexBatch {
-	public Vec3 translation = new Vec3();
-	public Vec3 rotation = new Vec3();
+	public Vector3f translation = new Vector3f();
+	public Vector3f rotation = new Vector3f();
 
 	class TextureInfo
 	{
@@ -93,8 +93,10 @@ public class VertexBatch {
 			mVertexMap.get(tex.texId).vertices = newbuffer;
 		}
 		
-		Vector2f realuvmin = new Vector2f((float)(1./tex.width*uvmin.x), (float)(1./tex.height*uvmin.y));
-		Vector2f realuvmax = new Vector2f((float)(1./tex.width*uvmax.x), (float)(1./tex.height*uvmax.y));
+		Vector2f realuvmin = new Vector2f((float)(1./tex.width*uvmin.x) + (float)(0.1 / tex.width), (float)(1./tex.height*uvmin.y) + (float)(0.1 / tex.height));
+		Vector2f realuvmax = new Vector2f((float)(1./tex.width*uvmax.x) - (float)(0.1 / tex.width), (float)(1./tex.height*uvmax.y) - (float)(0.1 / tex.height));
+		//Vector2f realuvmin = new Vector2f((float)(1./tex.width*uvmin.x), (float)(1./tex.height*uvmin.y));
+		//Vector2f realuvmax = new Vector2f((float)(1./tex.width*uvmax.x), (float)(1./tex.height*uvmax.y));
 		
 		//addTriangle(mVertexMap.get(texid), a, b, c, rgb);
 		//addTriangle(mVertexMap.get(texid), c, b, d, rgb);
