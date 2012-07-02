@@ -50,6 +50,7 @@ public class Game implements Runnable {
 
 	Level level = new Level();
 	Shader normalShader;
+	Shader tintShader;
 	Shader billboardShader;
 	VertexBuffer normalBuffer;
 	VertexBuffer entityBuffer;
@@ -300,13 +301,17 @@ public class Game implements Runnable {
 		
 		particleEngine.render();
 		
-		normalShader.enable();
+		tintShader.enable();
 		// normalBuffer.render(GL_QUADS, translation);
 		// entityBuffer.render(GL_QUADS, translation);
 		vb.render();
 		vbInterface.render();
+		Shader.disable();
+		
+		normalShader.enable();
 		level.render();
-		normalShader.disable();
+		Shader.disable();
+		
 		glPopMatrix();
 	}
 
@@ -341,8 +346,31 @@ public class Game implements Runnable {
 		 * rotation.x = -90.0f; }
 		 */
 
-		if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
-			if (Mouse.isButtonDown(0)) {
+
+		float vel = 0.1f;
+		if (m.y < Display.getHeight() / 10) {
+			translation.y += -vel * (1.f/scale.y);
+		} else if (m.y > (Display.getHeight() / 10) * 9) {
+			translation.y += vel * (1.f/scale.y);
+		}
+		if (m.x < Display.getWidth() / 10) {
+			translation.x -= vel * (1.f/scale.x);
+		} else if (m.x > (Display.getWidth() / 10) * 9) {
+			translation.x += vel * (1.f/scale.x);
+		}
+		
+		int md = Mouse.getDWheel();
+		if (md > 0) {
+			scale.x *= 1.1f;
+			scale.y *= 1.1f;
+		} else if (md < 0) {
+			scale.x *= 0.9f;
+			scale.y *= 0.9f;
+		}
+			
+		while (Mouse.next()) {
+			
+			if (Mouse.getEventButton() == 0 && Mouse.getEventButtonState() == true) {
 				float ratio = (float) 800 / (float) 600;
 				Vector2f c = new Vector2f((1.f / ((1.f / ratio)
 						* (Display.getWidth() / 2) * scale.x))
@@ -364,12 +392,11 @@ public class Game implements Runnable {
 					houseSelectedTimestamp = System.nanoTime();
 				} else if (level.get(x,y) == Level.FOREST) {
 					System.out.print("LUMBER!\n");
-					particleEngine.add(new Vector3f(x,y,1), new Vector3f(0,0,1), 1.0f, 1, 1, 0.1f);
+					particleEngine.add(new Vector3f(x,y,1), new Vector3f(housePosition.x,housePosition.y,1), 1.0f, 1, 1, 0.05f);
 				} else if (level.get(x,y) == Level.NOTHING) {
 					houseSelected = false;
 				}
-			}
-			if (Mouse.isButtonDown(1)) {
+			} else if (Mouse.getEventButton() == 1 && Mouse.getEventButtonState() == true) {
 				float ratio = (float) 800 / (float) 600;
 				Vector2f c = new Vector2f((1.f / ((1.f / ratio)
 						* (Display.getWidth() / 2) * scale.x))
@@ -391,29 +418,6 @@ public class Game implements Runnable {
 
 		}
 
-		float vel = 0.1f;
-		if (m.y < Display.getHeight() / 10) {
-			translation.y += -vel * (1.f/scale.y);
-		} else if (m.y > (Display.getHeight() / 10) * 9) {
-			translation.y += vel * (1.f/scale.y);
-		}
-		if (m.x < Display.getWidth() / 10) {
-			translation.x -= vel * (1.f/scale.x);
-		} else if (m.x > (Display.getWidth() / 10) * 9) {
-			translation.x += vel * (1.f/scale.x);
-		}
-
-		if (Mouse.next()) {
-			int md = Mouse.getDWheel();
-			if (md > 0) {
-				scale.x *= 1.1f;
-				scale.y *= 1.1f;
-			} else if (md < 0) {
-				scale.x *= 0.9f;
-				scale.y *= 0.9f;
-			}
-		}
-
 		float velTranslation = 1.f;
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			translation.z -= velTranslation;
@@ -427,7 +431,7 @@ public class Game implements Runnable {
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			translation.x += velTranslation;
 		}
-
+		
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState() == true) {
 				if (Keyboard.getEventKey() == kbl.get("reset")) {
@@ -462,6 +466,7 @@ public class Game implements Runnable {
 				System.out.println("Scale(" + scale.toString() + ")");
 			}
 		}
+		particleEngine.tick();
 		// System.out.println("" + rotation.y);
 	}
 
@@ -513,11 +518,13 @@ public class Game implements Runnable {
 
 	private void load() {
 		normalShader = new Shader("res/shaders/normal");
+		tintShader = new Shader("res/shaders/tint");
 
-		normalBuffer = new VertexBuffer(normalShader, tex);
-		entityBuffer = new VertexBuffer(normalShader, tex);
-		vb = new VertexBatch(normalShader);
-		vbInterface = new VertexBatch(normalShader);
+		normalBuffer = new VertexBuffer(tintShader, tex);
+		entityBuffer = new VertexBuffer(tintShader, tex);
+		vb = new VertexBatch(tintShader);
+		
+		vbInterface = new VertexBatch(tintShader);
 		particleEngine = new ParticleEngine(tex, vbInterface);
 
 		level.init(normalShader, tex);

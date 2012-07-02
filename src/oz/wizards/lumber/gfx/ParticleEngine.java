@@ -11,18 +11,19 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class ParticleEngine {
 	class Particle {
-		public Vector3f position, end;
+		public Vector3f start, position, end;
 		public int id, type, interpolationMethod;
 		public float timeStepping, currentStep, scale;
 		
 		public Particle (Vector3f start, Vector3f end, float scale, int type, int im, float ts, int id) {
-			position = start;
-			this.end = end;
+			this.start = new Vector3f(start);
+			this.position = new Vector3f(start);
+			this.end = new Vector3f(end);
 			this.scale = scale;
 			this.type = type;
-			interpolationMethod = im;
-			timeStepping = ts;
-			currentStep = 0;
+			this.interpolationMethod = im;
+			this.timeStepping = ts;
+			this.currentStep = 0;
 			this.id = id;
 		}
 	}
@@ -43,6 +44,11 @@ public class ParticleEngine {
 	}
 	
 	public void tick () {
+		for(int i = 0; i < particles.size(); i ++) {
+			Particle p = particles.get(i);
+			p.position.x += (p.end.x - p.start.x)*p.timeStepping; 
+			p.position.y += (p.end.y - p.start.y)*p.timeStepping; 
+		}
 	}
 	
 	public void render () {
