@@ -163,4 +163,8 @@ public class VertexBatch {
 		ti.vertices.put(ti.vertexCount * 8 + 7, uv.y);
 		ti.vertexCount++;
 	}
+
+	public Shader getShader() {
+		return shader;
+	}
 }

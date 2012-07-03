@@ -48,6 +48,11 @@ public class ParticleEngine {
 			Particle p = particles.get(i);
 			p.position.x += (p.end.x - p.start.x)*p.timeStepping; 
 			p.position.y += (p.end.y - p.start.y)*p.timeStepping; 
+			
+			if((p.end.x == p.position.x || Math.abs(p.end.x - p.position.x) < p.timeStepping) &&
+					(p.end.y == p.position.y || Math.abs(p.end.y - p.position.y) < p.timeStepping)) {
+				particles.remove(i);
+			}
 		}
 	}
 	

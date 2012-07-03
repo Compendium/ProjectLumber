@@ -392,7 +392,7 @@ public class Game implements Runnable {
 					houseSelectedTimestamp = System.nanoTime();
 				} else if (level.get(x,y) == Level.FOREST) {
 					System.out.print("LUMBER!\n");
-					particleEngine.add(new Vector3f(x,y,1), new Vector3f(housePosition.x,housePosition.y,1), 1.0f, 1, 1, 0.05f);
+					particleEngine.add(new Vector3f(x+.5f,y+.5f,1), new Vector3f(housePosition.x+.5f,housePosition.y+.5f,1), 1.0f, 1, 1, 0.05f);
 				} else if (level.get(x,y) == Level.NOTHING) {
 					houseSelected = false;
 				}
