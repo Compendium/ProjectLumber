@@ -23,6 +23,7 @@ public class Level {
 	public static final byte VILLAGE = 1;
 	public static final byte VILLAGE_DESTROYED = 2;
 	public static final byte FOREST = 3;
+	public static final byte FOREST_DESTROYED = 4;
 
 	public static int dim = 64;
 	private byte[] level = new byte[dim * dim];
@@ -82,8 +83,13 @@ public class Level {
 			uvmin.x = 0 + 16;
 			uvmin.y = 0 + 16*2;
 			uvmax.x = 16 + 16;
-			uvmax.y = 16 + 16*2;;
+			uvmax.y = 16 + 16*2;
 			// color = new Vector3f(1, 0, 0);
+		} else if (v == Level.FOREST_DESTROYED) {
+			uvmin.x = 0 + 16;
+			uvmin.y = 0 + 16*3;
+			uvmax.x = 16 + 16;
+			uvmax.y = 16 + 16*3;
 		} else {
 			putQuad((x + y * dim) * 6 * 5, new Vector3f(0, 0, 0), new Vector3f(0,
 					0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector2f(0,0),
