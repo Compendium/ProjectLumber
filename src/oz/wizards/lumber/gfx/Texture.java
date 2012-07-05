@@ -16,10 +16,10 @@ public class Texture {
 	public int width;
 	public int height;
 	public boolean hasAlpha;
+	ByteBuffer buf;
 
 	public Texture(String path) throws IOException {
 		InputStream in = new FileInputStream(path);
-		ByteBuffer buf;
 		try {
 			PNGDecoder decoder = new PNGDecoder(in);
 			width = decoder.getWidth();
@@ -67,5 +67,24 @@ public class Texture {
 				GL11.GL_REPEAT);
 		
 		System.out.println("Loaded texture " + texId + " (" + path + ") " + (hasAlpha ? "with alpha." : "without alpha."));
+	}
+	
+	public int getPixel (int x, int y) {
+		System.out.printf("getPixel @ %d, %d\n", x, y);
+		return getPixel(x + y * width);
+	}
+	
+	public int getPixel(int pixelpos) {
+		System.out.printf("getPixel @ %d\n", pixelpos);
+		byte b1 = buf.get(pixelpos * (hasAlpha ? 4 : 3));
+		byte b2 = buf.get(pixelpos * (hasAlpha ? 4 : 3) + 1);
+		byte b3 = buf.get(pixelpos * (hasAlpha ? 4 : 3) + 2);
+		byte b4 = buf.get(pixelpos * (hasAlpha ? 4 : 3) + 3);
+		//int pixel = ((0xff & a) << 24) | ((0xff & b) << 16) | ((0xff & c) << 8) | ((0xff & d));
+		int pixel = ((0xFF & b1) << 24) | ((0xFF & b2) << 16) |
+	            ((0xFF & b3) << 8) | (0xFF & b4);
+		System.out.println(String.format("RGBA: %x %x %x %x", b1, b2, b3, b4));
+		System.out.println("got pixel color val " + String.format("%x", pixel));
+		return pixel;
 	}
 }

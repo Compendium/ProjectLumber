@@ -10,39 +10,42 @@ public class Font {
 	private short [] kerningRight;
 	private short [] kerningLeft;
 	
-	Font (Texture fontImage, Shader shader) {
+	public Font (Texture fontImage, Shader shader) {
 		this.tex = fontImage;
 		this.shader = shader;
 		this.vertexBatch = new VertexBatch(shader);
-		kerningRight = new short [255];
-		kerningLeft = new short [255];
+		kerningRight = new short [256];
+		kerningLeft = new short [256];
 	}
 	
-	Font (Texture fontImage, VertexBatch vertexBatch) {
+	public Font (Texture fontImage, VertexBatch vertexBatch) {
 		this.tex = fontImage;
 		this.shader = vertexBatch.getShader();
 		this.vertexBatch = vertexBatch;
-		kerningRight = new short [255];
-		kerningLeft = new short [255];
+		kerningRight = new short [256];
+		kerningLeft = new short [256];
 	}
 	
-	void init () {
+	public void init () {
+		loadKerning();
 	}
 	
-	void draw (Vector2f position, float scale, String str) {
+	public void draw (Vector2f position, float scale, String str) {
 		Vector2f currentPosition = new Vector2f(position);
 		
-		for(int i = 0; i < 0; i++) {
+		for(int i = 0; i < str.length(); i++) {
 			char c = str.charAt(i);
+			int cy = c / 16;
+			int cx = c % 16;
 			
-			vertexBatch.putQuad(tex, new Vector3f(position.x, position.y, 0),
+			vertexBatch.putQuad(tex,
+					new Vector3f(position.x, position.y, 0),
 					new Vector3f(position.x, position.y + 1*scale, 0),
 					new Vector3f(position.x + 1*scale, position.y, 0),
 					new Vector3f(position.x + 1*scale, position.y + 1*scale, 0),
-					new Vector2f(x, 0), new Vector2f(x+mCharWidths[c], 1),
+					new Vector2f(cx * 8, cy * 8),
+					new Vector2f(cx * 8 + 8, cy * 8 + 8),
 					new Vector3f(1,1,1));
-			
-			currentPosition.x += (mCharWidths[c] * scale);
 		}
 	}
 	
@@ -62,7 +65,7 @@ public class Font {
 				//left to right
 				for(int pixelX = 0; pixelX < 8; pixelX++) {
 					for(int pixelY = 0; pixelY < 8; pixelY++) {
-						if(tex.getPixel((col*8)+pixelX, (row*8)+pixelY) != 0) {
+						if(tex.getPixel((col*8)+pixelX, (row*8)+pixelY) == 0xffffffff) {
 							kerningLeft[(row*16)+col] = (short) pixelX;
 							pixelX = 8;
 							pixelY = 8;
@@ -73,8 +76,8 @@ public class Font {
 				//right to left 
 				for(int pixelX = 7; pixelX >= 0; pixelX--) {
 					for(int pixelY = 7; pixelY >= 0; pixelY--) {
-						if(tex.getPixel((col*8)+pixelX, (row*8)+pixelY) != 0) {
-							kerningLeft[(row*16)+col] = (short) (7 - pixelX);
+						if(tex.getPixel((col*8)+pixelX, (row*8)+pixelY) == 0xffffffff) {
+							kerningRight[(row*16)+col] = (short) (7 - pixelX);
 							pixelX = -1;
 							pixelY = -1;
 						}
@@ -82,5 +85,11 @@ public class Font {
 				}
 			}
 		}
+		
+		char c = 'r';
+		int cy = c / 16;
+		int cx = c % 16;
+		System.out.printf("character: %c, cx: %d, cy: %d\n", c, cx, cy);
+		System.out.printf("left offset: %d, right offset: %d\n", kerningLeft[(cy*16)+cx], kerningRight[(cy*16)+cx]);
 	}
 }

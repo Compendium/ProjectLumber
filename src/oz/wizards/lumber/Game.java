@@ -18,6 +18,7 @@ import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import oz.wizards.lumber.gfx.Font;
 import oz.wizards.lumber.gfx.ParticleEngine;
 import oz.wizards.lumber.gfx.Shader;
 import oz.wizards.lumber.gfx.Texture;
@@ -38,6 +39,7 @@ public class Game implements Runnable {
 	private boolean loop = true;
 
 	Texture tex;
+	Texture fontset;
 	VertexBatch vb;
 	VertexBatch vbInterface;
 
@@ -61,6 +63,8 @@ public class Game implements Runnable {
 	long houseSelectedTimestamp = 0;
 
 	KeyboardLayout kbl;
+	
+	Font font;
 
 	@Override
 	public void run() {
@@ -299,17 +303,18 @@ public class Game implements Runnable {
 			
 		}
 		
-		particleEngine.render();
+		//particleEngine.render();
+		font.draw(new Vector2f(0,0), 1.0f, "Hello world!");
 		
 		tintShader.enable();
 		// normalBuffer.render(GL_QUADS, translation);
 		// entityBuffer.render(GL_QUADS, translation);
-		vb.render();
+		//vb.render();
 		vbInterface.render();
 		Shader.disable();
 		
 		normalShader.enable();
-		level.render();
+		//level.render();
 		Shader.disable();
 		
 		glPopMatrix();
@@ -511,6 +516,8 @@ public class Game implements Runnable {
 
 			try {
 				tex = new Texture("res/tiles.png");
+				fontset = new Texture("res/font.png");
+				System.out.println(tex.getPixel(0,0));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -531,5 +538,8 @@ public class Game implements Runnable {
 		particleEngine = new ParticleEngine(tex, vbInterface);
 
 		level.init(normalShader, tex);
+		
+		font = new Font(fontset, vbInterface);
+		font.init();
 	}
 }
