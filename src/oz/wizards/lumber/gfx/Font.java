@@ -39,13 +39,14 @@ public class Font {
 			int cx = c % 16;
 			
 			vertexBatch.putQuad(tex,
-					new Vector3f(position.x, position.y, 0),
-					new Vector3f(position.x, position.y + 1*scale, 0),
-					new Vector3f(position.x + 1*scale, position.y, 0),
-					new Vector3f(position.x + 1*scale, position.y + 1*scale, 0),
+					new Vector3f(currentPosition.x, position.y, 0),
+					new Vector3f(currentPosition.x, position.y + 1*scale, 0),
+					new Vector3f(currentPosition.x + 1*scale, position.y, 0),
+					new Vector3f(currentPosition.x + 1*scale, position.y + 1*scale, 0),
 					new Vector2f(cx * 8, cy * 8),
 					new Vector2f(cx * 8 + 8, cy * 8 + 8),
 					new Vector3f(1,1,1));
+			currentPosition.x += 1*scale;
 		}
 	}
 	

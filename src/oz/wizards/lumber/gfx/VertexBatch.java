@@ -34,7 +34,7 @@ public class VertexBatch {
 		int texId;
 		FloatBuffer vertices;
 		int vertexCount;
-		int maxQuads;
+		int vertexCapacity;
 	}
 	
 	private static final int FLOAT_SIZE_BYTES = 4;
@@ -79,16 +79,16 @@ public class VertexBatch {
 			ti.texId = tex.texId;
 			ti.vertices = ByteBuffer.allocateDirect((3 * FLOAT_SIZE_BYTES + 3 * FLOAT_SIZE_BYTES + 2 * FLOAT_SIZE_BYTES) * 6 * 1).order(ByteOrder.nativeOrder()).asFloatBuffer();
 			ti.vertexCount = 0;
-			ti.maxQuads = 1;
+			ti.vertexCapacity = 6;
 			mVertexMap.put(tex.texId, ti);
 			System.out.print("Newly allocated\n");
 		}
 		
-		if(mVertexMap.get(tex.texId).vertexCount / 6 >= mVertexMap.get(tex.texId).maxQuads)
+		if(mVertexMap.get(tex.texId).vertexCount + 6 >= mVertexMap.get(tex.texId).vertexCapacity)
 		{
-			mVertexMap.get(tex.texId).maxQuads *= 2;
+			mVertexMap.get(tex.texId).vertexCapacity *= 2;
 			FloatBuffer currentBuffer = mVertexMap.get(tex.texId).vertices;
-			FloatBuffer newbuffer = ByteBuffer.allocateDirect((3*FLOAT_SIZE_BYTES + 3 * FLOAT_SIZE_BYTES + 2 * FLOAT_SIZE_BYTES) * 6 * mVertexMap.get(tex.texId).maxQuads).order(ByteOrder.nativeOrder()).asFloatBuffer();
+			FloatBuffer newbuffer = ByteBuffer.allocateDirect((3*FLOAT_SIZE_BYTES + 3 * FLOAT_SIZE_BYTES + 2 * FLOAT_SIZE_BYTES) * mVertexMap.get(tex.texId).vertexCapacity).order(ByteOrder.nativeOrder()).asFloatBuffer();
 			currentBuffer.flip();
 			newbuffer.put(currentBuffer);
 			mVertexMap.get(tex.texId).vertices = newbuffer;
