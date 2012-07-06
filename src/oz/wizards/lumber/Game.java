@@ -111,36 +111,6 @@ public class Game implements Runnable {
 		glScalef(scale.x, scale.y, scale.z);
 		glTranslatef(-translation.x, -translation.y, -translation.z);
 
-		/*
-		 * vb.putQuad(tex, new Vec3(0.f, 0.f, -5.f), new Vec3(0.f, 1.f, -5.f),
-		 * new Vec3(1.f, 0.f, -5.f), new Vec3(1.f, 1.f, -5.f), new Vec2( 0.f,
-		 * 0.f), new Vec2(7.f, 7.f), new Vec3(1.f, 1.f, 1.f)); vb.putQuad(tex,
-		 * new Vec3(0.f, 0.f, 5.f), new Vec3(0.f, 1.f, 5.f), new Vec3(1.f, 0.f,
-		 * 5.f), new Vec3(1.f, 1.f, 5.f), new Vec2(0.f, 0.f), new Vec2(7.f,
-		 * 7.f), new Vec3(1.f, 1.f, 1.f)); for(int x = 0; x < 256; x++) {
-		 * for(int z = 0; z < 256; z++) { if(level[x+z*256] == 1) {
-		 * vb.putQuad(tex, new Vec3(x, 0.f, z+1), new Vec3(x, 0.f, z), new
-		 * Vec3(x+1, 0.f, z+1), new Vec3(x+1, 0.f, z), new Vec2(0.f, 0.f), new
-		 * Vec2(7.f, 7.f), new Vec3(1.f, 1.f, 1.f)); } else if(level[x+z*256] ==
-		 * 2) { vb.putQuad(tex, new Vec3(x, 0.f, z+1), new Vec3(x, 0.f, z), new
-		 * Vec3(x+1, 0.f, z+1), new Vec3(x+1, 0.f, z), new Vec2(0.f, 0.f), new
-		 * Vec2(7.f, 7.f), new Vec3(1.f, 1.f, 1.f)); } } }
-		 */
-		// vb.end();
-
-		/*
-		 * vb.putQuad(tex, new Vector3f(0, 0, 0), new Vector3f(0, 1, 0), new
-		 * Vector3f(1, 0, 0), new Vector3f(1, 1, 0), new Vector2f(0, 0), new
-		 * Vector2f(1, 1), new Vector3f(1,0,0)); vb.putQuad(tex, new
-		 * Vector3f(0+3, 0, 0), new Vector3f(0+3, 1, 0), new Vector3f(1+3, 0,
-		 * 0), new Vector3f(1+3, 1, 0), new Vector2f(0, 0), new Vector2f(1, 1),
-		 * new Vector3f(0,1,0));
-		 */
-		// normalBuffer.add(new Vector3f(0, 0, +0.5f), new Vector2f(0, 0), 1);
-		// normalBuffer.add(new Vector3f(0, 1, +0.5f), new Vector2f(0, 1), 1);
-		// normalBuffer.add(new Vector3f(1, 1, +0.5f), new Vector2f(1, 1), 1);
-		// normalBuffer.add(new Vector3f(1, 0, +0.5f), new Vector2f(1, 0), 1);
-
 		Vector2f offset = new Vector2f(0, 0);
 		Vector2f uvmin = new Vector2f(0, 0);
 		Vector2f uvmax = new Vector2f(0, 0);
@@ -161,54 +131,9 @@ public class Game implements Runnable {
 						0 + x, 1 + y, -.1f), new Vector3f(1 + x, 0 + y, -.1f),
 						new Vector3f(1 + x, 1 + y, -.1f), bguvmin, bguvmax,
 						new Vector3f(1, 1, 1));
-
-				// r = new Rectangle2f(new Vector2f(x, y), new Vector2f(x + 1,
-				// y + 1));
-				// r.min.x = x;
-				// r.min.y = y;
-				// r.max.x = x+1;
-				// r.max.y = y+1;
-
-				// if (r.contains(c)) {
-				// color.x = 1;
-				// color.y = color.z = 0;
-				// } else {
-				// color.x = color.y = color.z = 1;
-				// }
-
-				// if (level.get(x, y) == Level.FOREST) {
-				// uvmin.x = 0 + 16;
-				// uvmin.y = 0;
-				// uvmax.x = 15 + 16;
-				// uvmax.y = 16;
-				// } else if (level.get(x, y) == Level.VILLAGE) {
-				// uvmin.x = 0 + 16;
-				// uvmin.y = 16;
-				// uvmax.x = 15 + 16;
-				// uvmax.y = 32;
-				// } else if (level.get(x, y) == Level.VILLAGE_DESTROYED) {
-				// uvmin.x = 0 + 16;
-				// uvmin.y = 16+16;
-				// uvmax.x = 15 + 16;
-				// uvmax.y = 32+16;
-				// //color = new Vector3f(1, 0, 0);
-				// } else if (level.get(x, y) == Level.NOTHING) {
-				// continue;
-				// } else {
-				// continue;
-				// }
-
-				// uvmin.x = 16;
-				// uvmin.y = 0 + 16*level.get(x,y);
-				// uvmax.x = 15+16;
-				// uvmax.y = 16 + 16*level.get(x,y);
-				//
-				// vb.putQuad(tex, new Vector3f(0 + x, 0 + y, 0), new Vector3f(
-				// 0 + x, 1 + y, 0), new Vector3f(1 + x, 0 + y, 0),
-				// new Vector3f(1 + x, 1 + y, 0), uvmin, uvmax, color);
 			}
 		}
-		
+		//System.out.printf("Background iterations: %d * %d = %d\n", Level.dim, Level.dim, Level.dim * Level.dim);
 		
 		//interface
 		{
@@ -304,7 +229,7 @@ public class Game implements Runnable {
 		}
 		
 		//particleEngine.render();
-		font.draw(new Vector2f(0,0), 1.0f, "Hello world!");
+		//font.draw(new Vector2f(0,0), 1.0f, "Hello world!");
 		
 		tintShader.enable();
 		// normalBuffer.render(GL_QUADS, translation);
@@ -530,8 +455,9 @@ public class Game implements Runnable {
 		normalShader = new Shader("res/shaders/normal");
 		tintShader = new Shader("res/shaders/tint");
 
-		normalBuffer = new VertexBuffer(tintShader, tex);
-		entityBuffer = new VertexBuffer(tintShader, tex);
+		//normalBuffer = new VertexBuffer(tintShader, tex);
+		//entityBuffer = new VertexBuffer(tintShader, tex);
+		
 		vb = new VertexBatch(tintShader);
 		
 		vbInterface = new VertexBatch(tintShader);

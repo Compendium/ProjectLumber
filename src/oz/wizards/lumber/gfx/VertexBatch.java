@@ -81,18 +81,20 @@ public class VertexBatch {
 			ti.vertexCount = 0;
 			ti.vertexCapacity = 6;
 			mVertexMap.put(tex.texId, ti);
-			System.out.print("Newly allocated\n");
+			System.out.print("Newly allocated to " + mVertexMap.get(tex.texId).vertexCapacity + " Vertices, which equates to " + mVertexMap.get(tex.texId).vertices.capacity() + " floats\n");
 		}
 		
-		if(mVertexMap.get(tex.texId).vertexCount + 6 >= mVertexMap.get(tex.texId).vertexCapacity)
+		if(mVertexMap.get(tex.texId).vertexCount >= mVertexMap.get(tex.texId).vertexCapacity)
+		//	if(mVertexMap.get(tex.texId).vertexCount >= mVertexMap.get(tex.texId).vertexCapacity)
 		{
+			System.out.printf("vertexCount: %d, vertexCapacity: %d\n", mVertexMap.get(tex.texId).vertexCount, mVertexMap.get(tex.texId).vertexCapacity);
 			mVertexMap.get(tex.texId).vertexCapacity *= 2;
 			FloatBuffer currentBuffer = mVertexMap.get(tex.texId).vertices;
 			FloatBuffer newbuffer = ByteBuffer.allocateDirect((3*FLOAT_SIZE_BYTES + 3 * FLOAT_SIZE_BYTES + 2 * FLOAT_SIZE_BYTES) * mVertexMap.get(tex.texId).vertexCapacity).order(ByteOrder.nativeOrder()).asFloatBuffer();
 			currentBuffer.flip();
 			newbuffer.put(currentBuffer);
 			mVertexMap.get(tex.texId).vertices = newbuffer;
-			System.out.print("Re-allocated\n");
+			System.out.print("Re-allocated to " + mVertexMap.get(tex.texId).vertexCapacity + " Vertices, which equates to " + mVertexMap.get(tex.texId).vertices.capacity() + " floats\n");
 		}
 		
 		Vector2f realuvmin = new Vector2f((float)(1./tex.width*uvmin.x) + (float)(0.1 / tex.width), (float)(1./tex.height*uvmin.y) + (float)(0.1 / tex.height));
@@ -123,6 +125,7 @@ public class VertexBatch {
 		glEnableVertexAttribArray(mColorAttrib);
 		glActiveTexture(GL_TEXTURE0);
 		
+		
 		for(Entry<Integer, TextureInfo> cursor : mVertexMap.entrySet())
 		{
 			glBindTexture(GL_TEXTURE_2D, cursor.getKey());
@@ -142,7 +145,12 @@ public class VertexBatch {
 			
 			glDrawArrays(GL_TRIANGLES, 0, cursor.getValue().vertexCount+1);
 			cursor.getValue().vertexCount = 0;
-			//cursor.getValue().vertices.clear();
+			cursor.getValue().vertices.clear();
+		}
+		for(int i = 0; i < mVertexMap.size(); i++) {
+			if(mVertexMap.get(i) == null) continue;
+			System.out.printf("vertexCount for i=%d == %d", i, mVertexMap.get(i).vertexCount);
+			mVertexMap.get(i).vertexCount = 0;
 		}
 		//glDisableClientState(GL_VERTEX_ARRAY);
 		//glDisableClientState(GL_COLOR_ARRAY);
