@@ -81,20 +81,20 @@ public class VertexBatch {
 			ti.vertexCount = 0;
 			ti.vertexCapacity = 6;
 			mVertexMap.put(tex.texId, ti);
-			System.out.print("Newly allocated to " + mVertexMap.get(tex.texId).vertexCapacity + " Vertices, which equates to " + mVertexMap.get(tex.texId).vertices.capacity() + " floats\n");
+			//System.out.print("Newly allocated to " + mVertexMap.get(tex.texId).vertexCapacity + " Vertices, which equates to " + mVertexMap.get(tex.texId).vertices.capacity() + " floats\n");
 		}
 		
 		if(mVertexMap.get(tex.texId).vertexCount >= mVertexMap.get(tex.texId).vertexCapacity)
 		//	if(mVertexMap.get(tex.texId).vertexCount >= mVertexMap.get(tex.texId).vertexCapacity)
 		{
-			System.out.printf("vertexCount: %d, vertexCapacity: %d\n", mVertexMap.get(tex.texId).vertexCount, mVertexMap.get(tex.texId).vertexCapacity);
+			//System.out.printf("vertexCount: %d, vertexCapacity: %d\n", mVertexMap.get(tex.texId).vertexCount, mVertexMap.get(tex.texId).vertexCapacity);
 			mVertexMap.get(tex.texId).vertexCapacity *= 2;
 			FloatBuffer currentBuffer = mVertexMap.get(tex.texId).vertices;
 			FloatBuffer newbuffer = ByteBuffer.allocateDirect((3*FLOAT_SIZE_BYTES + 3 * FLOAT_SIZE_BYTES + 2 * FLOAT_SIZE_BYTES) * mVertexMap.get(tex.texId).vertexCapacity).order(ByteOrder.nativeOrder()).asFloatBuffer();
 			currentBuffer.flip();
 			newbuffer.put(currentBuffer);
 			mVertexMap.get(tex.texId).vertices = newbuffer;
-			System.out.print("Re-allocated to " + mVertexMap.get(tex.texId).vertexCapacity + " Vertices, which equates to " + mVertexMap.get(tex.texId).vertices.capacity() + " floats\n");
+			//System.out.print("Re-allocated to " + mVertexMap.get(tex.texId).vertexCapacity + " Vertices, which equates to " + mVertexMap.get(tex.texId).vertices.capacity() + " floats\n");
 		}
 		
 		Vector2f realuvmin = new Vector2f((float)(1./tex.width*uvmin.x) + (float)(0.1 / tex.width), (float)(1./tex.height*uvmin.y) + (float)(0.1 / tex.height));

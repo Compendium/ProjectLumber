@@ -30,35 +30,16 @@ public class Level {
 	private byte[] data = new byte[dim * dim];
 
 	public void tick() {
-		//dim = 63;
-		/*for (int x = 0; x < level.length; x++) {
-			for (int y = 0; y < level.length; y++) {
-				if (getData(x, y) != 127) {
-					setData(x, y, (byte) (getData(x, y) + 1));
+		for(int x = 0; x < dim; x++) {
+			for(int y = 0; y < dim; y++) {
+				if(level[x+y*dim] == Level.FOREST_DESTROYED)
+					data[x+y*dim]++;
+				if(level[x+y*dim] == Level.FOREST_DESTROYED && data[x+y*dim] == 5) {
+					set(x, y, Level.FOREST);
+					data[x+y*dim] = 0;
 				}
-				// if(get(x,y) == VILLAGE_DESTROYED && getData(x,y) == 2) {
-				// set(x,y, NOTHING);
-				// setData(x,y, (byte) -127);
-				// }
-
 			}
 		}
-		for (int x = 1; x < level.length - 1; x++) {
-			for (int y = 1; y < level.length - 1; y++) {
-				if (get(x, y) == Level.VILLAGE && getData(x, y) == 4
-						&& (get(x - 1, y) == Level.VILLAGE)) {
-					// || get(x, y - 1) == Level.VILLAGE
-					// || get(x - 1, y - 1) == Level.VILLAGE
-					// || get(x + 1, y) == Level.VILLAGE
-					// || get(x, y + 1) == Level.VILLAGE
-					// || get(x + 1, y + 1) == Level.VILLAGE
-					// || get(x + 1, y - 1) == Level.VILLAGE
-					// || get(x - 1, y + 1) == Level.VILLAGE)) {
-					set(x, y, Level.VILLAGE_DESTROYED);
-					setData(x, y, (byte) 0);
-				}
-			}
-		}*/
 	}
 
 	public void set(int x, int y, byte v) {
@@ -91,13 +72,13 @@ public class Level {
 			uvmax.x = 16 + 16;
 			uvmax.y = 16 + 16*3;
 		} else {
-			putQuad((x + y * dim) * 6 * 5, new Vector3f(0, 0, 0), new Vector3f(0,
+			setQuad((x + y * dim) * 6 * 5, new Vector3f(0, 0, 0), new Vector3f(0,
 					0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector2f(0,0),
 					new Vector2f(0,0));
 			return;
 		}
 
-		putQuad((x + y * dim) * 6 * 5, new Vector3f(0 + x, 0 + y, 0),
+		setQuad((x + y * dim) * 6 * 5, new Vector3f(0 + x, 0 + y, 0),
 				new Vector3f(0 + x, 1 + y, 0), new Vector3f(1 + x, 0 + y, 0),
 				new Vector3f(1 + x, 1 + y, 0), uvmin, uvmax);
 	}
@@ -142,7 +123,7 @@ public class Level {
 	private Texture texture;
 	public FloatBuffer buffer;
 
-	public void putQuad(int startIndex, Vector3f a, Vector3f b, Vector3f c,
+	public void setQuad(int startIndex, Vector3f a, Vector3f b, Vector3f c,
 			Vector3f d, Vector2f uvmin, Vector2f uvmax) {
 		//Vector2f realuvmin = new Vector2f((float) (1. / texture.width * uvmin.x),(float) (1. / texture.height * uvmin.y));
 		//Vector2f realuvmax = new Vector2f((float) (1. / texture.width * uvmax.x), (float) (1. / texture.height * uvmax.y));

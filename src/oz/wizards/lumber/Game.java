@@ -25,6 +25,7 @@ import oz.wizards.lumber.gfx.Texture;
 import oz.wizards.lumber.gfx.VertexBatch;
 import oz.wizards.lumber.gfx.VertexBuffer;
 import oz.wizards.lumber.io.KeyboardLayout;
+import oz.wizards.lumber.io.Log;
 import oz.wizards.lumber.math.Rectangle2f;
 import oz.wizards.lumber.math.Vec2;
 import oz.wizards.lumber.math.Vec3;
@@ -71,6 +72,8 @@ public class Game implements Runnable {
 	@Override
 	public void run() {
 		kbl = new KeyboardLayout("keyboardlayout.txt");
+		Log.redirectOutputToFile = true;
+		Log.enableFileOutput("tinyworld");
 
 		init();
 		load();
@@ -95,11 +98,13 @@ public class Game implements Runnable {
 			deltaTime = System.nanoTime() - deltaTime;
 			if (lastPrinted < System.nanoTime()) {
 				lastPrinted = System.nanoTime() + 5L * 1000000000L;
-				System.out.println("dt: " + ((double) deltaTime / 1000000.0)
-						+ " ms");
+				//System.out.println("dt: " + ((double) deltaTime / 1000000.0)
+						//+ " ms");
+				Log.printf("Delta Time: %f ms, using %d/%d MB of Memory", ((double) deltaTime / 1000000.0), Runtime.getRuntime().totalMemory() / 1024 / 1024, Runtime.getRuntime().maxMemory() / 1024 / 1024);
 			}
 		}
 		Display.destroy();
+		Log.close();
 	}
 
 	private void render() {
