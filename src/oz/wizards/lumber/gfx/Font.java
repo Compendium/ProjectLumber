@@ -32,21 +32,26 @@ public class Font {
 	
 	public void draw (Vector2f position, float scale, String str) {
 		Vector2f currentPosition = new Vector2f(position);
+		float ratio = (float) 800 / (float) 600;
 		
 		for(int i = 0; i < str.length(); i++) {
 			char c = str.charAt(i);
 			int cy = c / 16;
 			int cx = c % 16;
+			double xl, xr;
+			xl = currentPosition.x;
+			float charWidth = 1.f/8.f * (8 - kerningLeft[c] - kerningRight[c]);
+			xr = currentPosition.x + charWidth;
 			
 			vertexBatch.putQuad(tex,
 					new Vector3f(currentPosition.x, position.y, 0),
 					new Vector3f(currentPosition.x, position.y + 1*scale, 0),
-					new Vector3f(currentPosition.x + 1*scale, position.y, 0),
-					new Vector3f(currentPosition.x + 1*scale, position.y + 1*scale, 0),
-					new Vector2f(cx * 8, cy * 8),
-					new Vector2f(cx * 8 + 8, cy * 8 + 8),
+					new Vector3f(currentPosition.x + charWidth*scale, position.y, 0),
+					new Vector3f(currentPosition.x + charWidth*scale, position.y + 1*scale, 0),
+					new Vector2f(cx * 8 + kerningLeft[c], cy * 8),
+					new Vector2f(cx * 8 + 8 - kerningRight[c], cy * 8 + 8),
 					new Vector3f(1,1,1));
-			currentPosition.x += 1*scale;
+			currentPosition.x = currentPosition.x + charWidth*scale + 0.1f * scale;
 		}
 	}
 	

@@ -70,12 +70,12 @@ public class Texture {
 	}
 	
 	public int getPixel (int x, int y) {
-		System.out.printf("getPixel @ %d, %d\n", x, y);
+		//System.out.printf("getPixel @ %d, %d\n", x, y);
 		return getPixel(x + y * width);
 	}
 	
 	public int getPixel(int pixelpos) {
-		System.out.printf("getPixel @ %d\n", pixelpos);
+		//System.out.printf("getPixel @ %d\n", pixelpos);
 		byte b1 = buf.get(pixelpos * (hasAlpha ? 4 : 3));
 		byte b2 = buf.get(pixelpos * (hasAlpha ? 4 : 3) + 1);
 		byte b3 = buf.get(pixelpos * (hasAlpha ? 4 : 3) + 2);
@@ -83,8 +83,8 @@ public class Texture {
 		//int pixel = ((0xff & a) << 24) | ((0xff & b) << 16) | ((0xff & c) << 8) | ((0xff & d));
 		int pixel = ((0xFF & b1) << 24) | ((0xFF & b2) << 16) |
 	            ((0xFF & b3) << 8) | (0xFF & b4);
-		System.out.println(String.format("RGBA: %x %x %x %x", b1, b2, b3, b4));
-		System.out.println("got pixel color val " + String.format("%x", pixel));
+		//System.out.println(String.format("RGBA: %x %x %x %x", b1, b2, b3, b4));
+		//System.out.println("got pixel color val " + String.format("%x", pixel));
 		return pixel;
 	}
 }

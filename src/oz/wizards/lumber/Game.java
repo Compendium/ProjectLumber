@@ -42,6 +42,7 @@ public class Game implements Runnable {
 	Texture fontset;
 	VertexBatch vb;
 	VertexBatch vbInterface;
+	VertexBatch vbFont;
 
 	int prevx = -1, prevy = -1;
 	int diffy = 0, diffx = 0;
@@ -61,6 +62,7 @@ public class Game implements Runnable {
 	boolean houseSelected = false;
 	Vector2f housePosition = new Vector2f(-1,-1);
 	long houseSelectedTimestamp = 0;
+	int woodcount = 0;
 
 	KeyboardLayout kbl;
 	
@@ -101,16 +103,6 @@ public class Game implements Runnable {
 	}
 
 	private void render() {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glMatrixMode(GL_MODELVIEW_MATRIX);
-		glPushMatrix();
-		glLoadIdentity();
-
-		glRotatef(rotation.x, 1.f, 0.f, 0.f);
-		glRotatef(rotation.y, 0.f, 1.f, 0.f);
-		glScalef(scale.x, scale.y, scale.z);
-		glTranslatef(-translation.x, -translation.y, -translation.z);
-
 		Vector2f offset = new Vector2f(0, 0);
 		Vector2f uvmin = new Vector2f(0, 0);
 		Vector2f uvmax = new Vector2f(0, 0);
@@ -228,18 +220,31 @@ public class Game implements Runnable {
 			
 		}
 		
-		//particleEngine.render();
-		//font.draw(new Vector2f(0,0), 1.0f, "Hello world!");
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glMatrixMode(GL_MODELVIEW_MATRIX);
+		glPushMatrix();
+		glLoadIdentity();
 		
 		tintShader.enable();
+		//glTranslatef(translation.x, translation.y, translation.z);
+		font.draw(new Vector2f(-ratio,1.f-0.05f), 0.05f, "Wood: " + woodcount);
+		vbFont.render();
+		
+
+		glRotatef(rotation.x, 1.f, 0.f, 0.f);
+		glRotatef(rotation.y, 0.f, 1.f, 0.f);
+		glScalef(scale.x, scale.y, scale.z);
+		glTranslatef(-translation.x, -translation.y, -translation.z);
+
 		// normalBuffer.render(GL_QUADS, translation);
 		// entityBuffer.render(GL_QUADS, translation);
-		//vb.render();
+		particleEngine.render();
 		vbInterface.render();
+		vb.render();
 		Shader.disable();
 		
 		normalShader.enable();
-		//level.render();
+		level.render();
 		Shader.disable();
 		
 		glPopMatrix();
@@ -323,9 +328,11 @@ public class Game implements Runnable {
 				} else if (level.get(x,y) == Level.FOREST) {
 					particleEngine.add(new Vector3f(x+.5f,y+.5f,1), new Vector3f(housePosition.x+.5f,housePosition.y+.5f,1), 1.0f, 1, 1, 0.05f);
 					level.set(x, y, Level.FOREST_DESTROYED);
+					woodcount++;
 				} else if (level.get(x,y) == Level.FOREST_DESTROYED) {
 					particleEngine.add(new Vector3f(x+.5f,y+.5f,1), new Vector3f(housePosition.x+.5f,housePosition.y+.5f,1), 1.0f, 1, 1, 0.05f);
 					level.set(x, y, Level.NOTHING);
+					woodcount++;
 				} else if (level.get(x,y) == Level.NOTHING) {
 					houseSelected = false;
 				}
@@ -461,11 +468,12 @@ public class Game implements Runnable {
 		vb = new VertexBatch(tintShader);
 		
 		vbInterface = new VertexBatch(tintShader);
+		vbFont = new VertexBatch(tintShader);
 		particleEngine = new ParticleEngine(tex, vbInterface);
 
 		level.init(normalShader, tex);
 		
-		font = new Font(fontset, vbInterface);
+		font = new Font(fontset, vbFont);
 		font.init();
 	}
 }
