@@ -226,15 +226,24 @@ public class Game implements Runnable {
 		}
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glMatrixMode(GL_MODELVIEW_MATRIX);
-		glPushMatrix();
+		
+		glMatrixMode(GL_PROJECTION_MATRIX);
 		glLoadIdentity();
+		//glOrtho(-ratio, ratio, -1, 1, -1, 1);
+		glOrtho(0, 800, 0, 600, -1, 1);
+		glMatrixMode(GL_MODELVIEW_MATRIX); 
 		
 		tintShader.enable();
 		//glTranslatef(translation.x, translation.y, translation.z);
-		font.draw(new Vector2f(-ratio,1.f-0.05f), 0.05f, "Wood: " + woodcount);
+		font.draw(new Vector2f(400,300), 1.f, "Wood: " + woodcount);
 		vbFont.render();
 		
+		glMatrixMode(GL_PROJECTION_MATRIX);
+		glLoadIdentity();
+		glOrtho(-ratio, ratio, -1, 1, -1, 1);
+		//glOrtho(0, 800, 0, 600, -1, 1);
+		glMatrixMode(GL_MODELVIEW_MATRIX);
+		glLoadIdentity();
 
 		glRotatef(rotation.x, 1.f, 0.f, 0.f);
 		glRotatef(rotation.y, 0.f, 1.f, 0.f);
@@ -251,8 +260,6 @@ public class Game implements Runnable {
 		normalShader.enable();
 		level.render();
 		Shader.disable();
-		
-		glPopMatrix();
 	}
 
 	boolean isUpdating = false;
@@ -429,14 +436,15 @@ public class Game implements Runnable {
 			float ratio = (float) 800 / (float) 600;
 			// Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 3, 10);
 			// glFrustum(-ratio, ratio, -1, 1, 1, 100);
-			glOrtho(-ratio, ratio, -1, 1, -1, 1);
+			//glOrtho(-ratio, ratio, -1, 1, -1, 1);
+			glOrtho(0, 800, 0, 600, -1, 1);
 
 			glMatrixMode(GL_MODELVIEW);
 
 			glEnable(GL_TEXTURE_2D);
 			glDisable(GL_SMOOTH);
-			// glEnable(GL_CULL_FACE);
-			glEnable(GL_CULL_FACE);
+			//glEnable(GL_CULL_FACE);
+			glDisable(GL_CULL_FACE);
 			glFrontFace(GL_CW);
 
 			glEnable(GL_ALPHA_TEST);

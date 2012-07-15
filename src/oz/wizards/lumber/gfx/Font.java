@@ -40,14 +40,16 @@ public class Font {
 			int cx = c % 16;
 			double xl, xr;
 			xl = currentPosition.x;
-			float charWidth = 1.f/8.f * (8 - kerningLeft[c] - kerningRight[c]);
+			int charPixelWidth = (8 - kerningLeft[c] - kerningRight[c]); //width of tha character in pixels
+			//float charWidth = 1.f/(ratio*2) * (float)charPixelWidth; //'real' width, for the vertexbatch coordinates
+			float charWidth = charPixelWidth;
 			xr = currentPosition.x + charWidth;
 			
 			vertexBatch.putQuad(tex,
 					new Vector3f(currentPosition.x, position.y, 0),
-					new Vector3f(currentPosition.x, position.y + 1*scale, 0),
+					new Vector3f(currentPosition.x, position.y + 8*scale, 0),
 					new Vector3f(currentPosition.x + charWidth*scale, position.y, 0),
-					new Vector3f(currentPosition.x + charWidth*scale, position.y + 1*scale, 0),
+					new Vector3f(currentPosition.x + charWidth*scale, position.y + 8*scale, 0),
 					new Vector2f(cx * 8 + kerningLeft[c], cy * 8),
 					new Vector2f(cx * 8 + 8 - kerningRight[c], cy * 8 + 8),
 					new Vector3f(1,1,1));
