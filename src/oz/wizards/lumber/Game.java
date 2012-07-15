@@ -227,39 +227,38 @@ public class Game implements Runnable {
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		glMatrixMode(GL_PROJECTION_MATRIX);
+		glEnable(GL_DEPTH_TEST);
+		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		//glOrtho(-ratio, ratio, -1, 1, -1, 1);
-		glOrtho(0, 800, 0, 600, -1, 1);
-		glMatrixMode(GL_MODELVIEW_MATRIX); 
-		
-		tintShader.enable();
-		//glTranslatef(translation.x, translation.y, translation.z);
-		font.draw(new Vector2f(400,300), 1.f, "Wood: " + woodcount);
-		vbFont.render();
-		
-		glMatrixMode(GL_PROJECTION_MATRIX);
-		glLoadIdentity();
-		glOrtho(-ratio, ratio, -1, 1, -1, 1);
-		//glOrtho(0, 800, 0, 600, -1, 1);
-		glMatrixMode(GL_MODELVIEW_MATRIX);
-		glLoadIdentity();
-
 		glRotatef(rotation.x, 1.f, 0.f, 0.f);
 		glRotatef(rotation.y, 0.f, 1.f, 0.f);
 		glScalef(scale.x, scale.y, scale.z);
 		glTranslatef(-translation.x, -translation.y, -translation.z);
-
-		// normalBuffer.render(GL_QUADS, translation);
-		// entityBuffer.render(GL_QUADS, translation);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(-ratio, ratio, -1, 1, -1, 1);
+		
+		tintShader.enable();
 		particleEngine.render();
 		vbInterface.render();
 		vb.render();
-		Shader.disable();
+		tintShader.disable();
 		
 		normalShader.enable();
 		level.render();
-		Shader.disable();
+		normalShader.disable();
+		
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0, 800, 0, 600, -1, 1);
+		glDisable(GL_DEPTH_TEST);
+		
+		tintShader.enable();
+		font.draw(new Vector2f(0,600-2*8), 2.f, "Wood: " + woodcount);
+		vbFont.render();
+		tintShader.disable();
 	}
 
 	boolean isUpdating = false;

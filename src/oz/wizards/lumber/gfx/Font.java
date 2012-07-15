@@ -64,7 +64,7 @@ public class Font {
 	void render (Vector2f offset) {
 		shader.enable();
 		vertexBatch.render();
-		Shader.disable();
+		shader.disable();
 	}
 	
 	private void loadKerning () {

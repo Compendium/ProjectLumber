@@ -39,7 +39,11 @@ public class Shader {
 		GL20.glUseProgram(shader);
 	}
 
-	public static void disable() {
+	public void disable() {
+		GL20.glUseProgram(0);
+	}
+	
+	public static void disableAll () {
 		GL20.glUseProgram(0);
 	}
 
