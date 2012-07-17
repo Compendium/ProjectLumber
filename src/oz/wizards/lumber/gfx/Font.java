@@ -38,13 +38,9 @@ public class Font {
 			char c = str.charAt(i);
 			int cy = c / 16;
 			int cx = c % 16;
-			double xl, xr;
-			xl = currentPosition.x;
 			int charPixelWidth = (8 - kerningLeft[c] - kerningRight[c]); //width of tha character in pixels
 			//float charWidth = 1.f/(ratio*2) * (float)charPixelWidth; //'real' width, for the vertexbatch coordinates
 			float charWidth = charPixelWidth;
-			xr = currentPosition.x + charWidth;
-			
 			vertexBatch.putQuad(tex,
 					new Vector3f(currentPosition.x, position.y, 0),
 					new Vector3f(currentPosition.x, position.y + 8*scale, 0),
@@ -53,18 +49,19 @@ public class Font {
 					new Vector2f(cx * 8 + kerningLeft[c], cy * 8),
 					new Vector2f(cx * 8 + 8 - kerningRight[c], cy * 8 + 8),
 					new Vector3f(1,1,1));
-			currentPosition.x = currentPosition.x + charWidth*scale + 0.1f * scale;
+			currentPosition.x = currentPosition.x + charWidth*scale + 1.f * scale;
 		}
 	}
 	
-	/**
-	 * 
-	 * @param offset The offset used while rendering, input the camera translation here to acheive screen space rendering. Or (0|0) for world space rendering.
-	 */
-	void render (Vector2f offset) {
-		shader.enable();
-		vertexBatch.render();
-		shader.disable();
+	public float getWidth (String str, float scale) {
+		float width = 0.f;
+		for(int i = 0; i < str.length(); i++) {
+			char c = str.charAt(i);
+			int charPixelWidth = (8 - kerningLeft[c] - kerningRight[c]);
+			float charWidth = charPixelWidth * scale + 1.f * scale;
+			width += charWidth;
+		}
+		return width;
 	}
 	
 	private void loadKerning () {

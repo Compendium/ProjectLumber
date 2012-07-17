@@ -41,7 +41,8 @@ public class Game implements Runnable {
 
 	Texture tex;
 	Texture fontset;
-	VertexBatch vb;
+	Texture tree;
+	VertexBatch vbBackground;
 	VertexBatch vbInterface;
 	VertexBatch vbFont;
 
@@ -121,12 +122,13 @@ public class Game implements Runnable {
 				(1.f / ((Display.getHeight() / 2) * scale.y))
 						* (m.y - Display.getHeight() / 2) + translation.y);
 		Rectangle2f r = new Rectangle2f(new Vector2f(), new Vector2f());
+		float zl = 0.f;
 		for (int x = 0; x < Level.dim; x++) {
 			for (int y = 0; y < Level.dim; y++) {
 				// grass-background
-				vb.putQuad(tex, new Vector3f(0 + x, 0 + y, -.1f), new Vector3f(
-						0 + x, 1 + y, -.1f), new Vector3f(1 + x, 0 + y, -.1f),
-						new Vector3f(1 + x, 1 + y, -.1f), bguvmin, bguvmax,
+				vbBackground.putQuad(tex, new Vector3f(0 + x, 0 + y, zl), new Vector3f(
+						0 + x, 1 + y, zl), new Vector3f(1 + x, 0 + y, zl),
+						new Vector3f(1 + x, 1 + y, zl), bguvmin, bguvmax,
 						new Vector3f(1, 1, 1));
 			}
 		}
@@ -139,85 +141,86 @@ public class Game implements Runnable {
 				long diff = (System.nanoTime()/1000 - houseSelectedTimestamp/1000);
 				int x = (int) housePosition.x;
 				int y = (int) housePosition.y;
+				float z = 3.f;
 				long speed = 50000;
 				if(diff < speed*1) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(0, 96), new Vector2f(16,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*2) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(16, 96), new Vector2f(32,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*3) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(32, 96), new Vector2f(48,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*4) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(48, 96), new Vector2f(64,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*5) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(64, 96), new Vector2f(80,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*6) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(80, 96), new Vector2f(96,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*7) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(96, 96), new Vector2f(112,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*8) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(112, 96), new Vector2f(128,112), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*9) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(0, 112), new Vector2f(16,128), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*10) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(16, 112), new Vector2f(32,128), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*11) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(32, 112), new Vector2f(48,128), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*12) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(48, 112), new Vector2f(64,128), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*13) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(64, 112), new Vector2f(80,128), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*14) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(80, 112), new Vector2f(96,128), new Vector3f(1,1,1));
 				}
 				else if(diff < speed*15) {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(96, 112), new Vector2f(112,128), new Vector3f(1,1,1));
 				}
 				else {
-					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, 1), new Vector3f(0+x, 1+y, 1), 
-							new Vector3f(1+x,0+y,1), new Vector3f(1+x,1+y,1), 
+					vbInterface.putQuad(tex, new Vector3f(0+x, 0+y, z), new Vector3f(0+x, 1+y, z), 
+							new Vector3f(1+x,0+y,z), new Vector3f(1+x,1+y,z), 
 							new Vector2f(112, 112), new Vector2f(128,128), new Vector3f(1,1,1));
 					houseSelectedTimestamp = System.nanoTime();
 				}
@@ -227,7 +230,7 @@ public class Game implements Runnable {
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glRotatef(rotation.x, 1.f, 0.f, 0.f);
@@ -236,27 +239,40 @@ public class Game implements Runnable {
 		glTranslatef(-translation.x, -translation.y, -translation.z);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(-ratio, ratio, -1, 1, -1, 1);
+		glOrtho(-ratio, ratio, -1, 1, -10, 10);
 		
 		tintShader.enable();
-		particleEngine.render();
-		vbInterface.render();
-		vb.render();
+		vbBackground.render();
 		tintShader.disable();
 		
 		normalShader.enable();
 		level.render();
 		normalShader.disable();
 		
+		tintShader.enable();
+		particleEngine.render();
+		vbInterface.render();
+		tintShader.disable();
+		
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, 800, 0, 600, -1, 1);
-		glDisable(GL_DEPTH_TEST);
+		glOrtho(0, 800, 0, 600, -10, 10);
+		//glDisable(GL_DEPTH_TEST);
 		
 		tintShader.enable();
-		font.draw(new Vector2f(0,600-2*8), 2.f, "Wood: " + woodcount);
+		float size = 8*2.5f;
+		float x,y,z;
+		x = 800 - font.getWidth("Wood: " + woodcount, 2.f) - size;
+		y = 600 - size;
+		z = 1;
+		vbFont.putQuad(tex,
+				new Vector3f(x,y,z),
+				new Vector3f(x,y+size,z), 
+				new Vector3f(x+size,y,z),
+				new Vector3f(x+size,y+size,z), new Vector2f(0,48), new Vector2f(7,55), new Vector3f(1,1,1));
+		font.draw(new Vector2f(800 - font.getWidth("Wood: " + woodcount, 2.f),600-2*8-3), 2.f, "Wood: " + woodcount);
 		vbFont.render();
 		tintShader.disable();
 	}
@@ -336,12 +352,12 @@ public class Game implements Runnable {
 					housePosition.x = x;
 					housePosition.y = y;
 					houseSelectedTimestamp = System.nanoTime();
-				} else if (level.get(x,y) == Level.FOREST) {
-					particleEngine.add(new Vector3f(x+.5f,y+.5f,1), new Vector3f(housePosition.x+.5f,housePosition.y+.5f,1), 1.0f, 1, 1, 0.05f);
+				} else if (level.get(x,y) == Level.FOREST && houseSelected) {
+					particleEngine.add(new Vector3f(x+.5f,y+.5f,2), new Vector3f(housePosition.x+.5f,housePosition.y+.5f,2), 1.0f, 1, 1, 0.05f);
 					level.set(x, y, Level.FOREST_DESTROYED);
 					woodcount++;
-				} else if (level.get(x,y) == Level.FOREST_DESTROYED) {
-					particleEngine.add(new Vector3f(x+.5f,y+.5f,1), new Vector3f(housePosition.x+.5f,housePosition.y+.5f,1), 1.0f, 1, 1, 0.05f);
+				} else if (level.get(x,y) == Level.FOREST_DESTROYED && houseSelected) {
+					particleEngine.add(new Vector3f(x+.5f,y+.5f,2), new Vector3f(housePosition.x+.5f,housePosition.y+.5f,2), 1.0f, 1, 1, 0.05f);
 					level.set(x, y, Level.NOTHING);
 					woodcount++;
 				} else if (level.get(x,y) == Level.NOTHING) {
@@ -446,14 +462,15 @@ public class Game implements Runnable {
 			glDisable(GL_CULL_FACE);
 			glFrontFace(GL_CW);
 
-			glEnable(GL_ALPHA_TEST);
-			glAlphaFunc(GL_EQUAL, 1.0f);
+			//glEnable(GL_ALPHA_TEST);
+			//glAlphaFunc(GL_EQUAL, 1.0f);
 			// glDepthMask(false);
 
+			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_BLEND);
 
-			glEnable(GL_DEPTH_TEST);
+			//glEnable(GL_DEPTH_TEST);
 
 			float k = 1.f / 255.f;
 			glClearColor(k * 0x80, k * 0xa6, k * 0xa9, 1.0f);
@@ -461,6 +478,7 @@ public class Game implements Runnable {
 			try {
 				tex = new Texture("res/tiles.png");
 				fontset = new Texture("res/font.png");
+				tree = new Texture("res/tree.png");
 				System.out.println(tex.getPixel(0,0));
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -477,7 +495,7 @@ public class Game implements Runnable {
 		//normalBuffer = new VertexBuffer(tintShader, tex);
 		//entityBuffer = new VertexBuffer(tintShader, tex);
 		
-		vb = new VertexBatch(tintShader);
+		vbBackground = new VertexBatch(tintShader);
 		
 		vbInterface = new VertexBatch(tintShader);
 		vbFont = new VertexBatch(tintShader);

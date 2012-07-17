@@ -78,9 +78,9 @@ public class Level {
 			return;
 		}
 
-		setQuad((x + y * dim) * 6 * 5, new Vector3f(0 + x, 0 + y, 0),
-				new Vector3f(0 + x, 1 + y, 0), new Vector3f(1 + x, 0 + y, 0),
-				new Vector3f(1 + x, 1 + y, 0), uvmin, uvmax);
+		setQuad((x + y * dim) * 6 * 5, new Vector3f(0 + x, 0 + y, 1),
+				new Vector3f(0 + x, 1 + y, 1), new Vector3f(1 + x, 0 + y, 1),
+				new Vector3f(1 + x, 1 + y, 1), uvmin, uvmax);
 	}
 
 	public byte get(int x, int y) {

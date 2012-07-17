@@ -147,11 +147,6 @@ public class VertexBatch {
 			cursor.getValue().vertexCount = 0;
 			cursor.getValue().vertices.clear();
 		}
-		for(int i = 0; i < mVertexMap.size(); i++) {
-			if(mVertexMap.get(i) == null) continue;
-			System.out.printf("vertexCount for i=%d == %d", i, mVertexMap.get(i).vertexCount);
-			mVertexMap.get(i).vertexCount = 0;
-		}
 		//glDisableClientState(GL_VERTEX_ARRAY);
 		//glDisableClientState(GL_COLOR_ARRAY);
 		//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
