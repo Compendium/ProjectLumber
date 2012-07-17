@@ -25,7 +25,7 @@ public class Level {
 	public static final byte FOREST = 3;
 	public static final byte FOREST_DESTROYED = 4;
 
-	public static int dim = 64;
+	public static int dim = 512;
 	private byte[] level = new byte[dim * dim];
 	private byte[] data = new byte[dim * dim];
 

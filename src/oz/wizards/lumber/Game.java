@@ -73,7 +73,7 @@ public class Game implements Runnable {
 	@Override
 	public void run() {
 		kbl = new KeyboardLayout("keyboardlayout.txt");
-		Log.redirectOutputToFile = true;
+		//Log.redirectOutputToFile = true;
 		Log.enableFileOutput("tinyworld");
 
 		init();
@@ -85,23 +85,14 @@ public class Game implements Runnable {
 				loop = false;
 				break;
 			}
-
-			// try {
-			// Thread.sleep(10);
-			// } catch (InterruptedException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
-			// }
-
+			
 			tick();
 			render();
 			Display.update();
 			deltaTime = System.nanoTime() - deltaTime;
 			if (lastPrinted < System.nanoTime()) {
 				lastPrinted = System.nanoTime() + 5L * 1000000000L;
-				//System.out.println("dt: " + ((double) deltaTime / 1000000.0)
-						//+ " ms");
-				Log.printf("Delta Time: %f ms, using %d/%d MB of Memory", ((double) deltaTime / 1000000.0), Runtime.getRuntime().totalMemory() / 1024 / 1024, Runtime.getRuntime().maxMemory() / 1024 / 1024);
+				Log.printf("Delta Time: %f ms, using %d/%d MB of Memory\n", ((double) deltaTime / 1000000.0), Runtime.getRuntime().totalMemory() / 1024 / 1024, Runtime.getRuntime().maxMemory() / 1024 / 1024);
 			}
 		}
 		Display.destroy();
@@ -282,15 +273,17 @@ public class Game implements Runnable {
 	private void tick() {
 		if (lastTicked < System.nanoTime() && !isUpdating) {
 			lastTicked = System.nanoTime() + 1000000000L;
-			new Thread(new Runnable() {
+			Thread t = new Thread(new Runnable() {
 				@Override
 				public void run() {
 					isUpdating = true;
 					level.tick();
 					isUpdating = false;
+					System.out.println("level thread t=" + Thread.currentThread().getId() + " finished");
 				}
-			}).start();
-			System.out.println("ticked");
+			});
+			t.start();
+			System.out.println("level thread t=" + t.getId() + " started");
 		}
 
 		diffx = Mouse.getX() - prevx;

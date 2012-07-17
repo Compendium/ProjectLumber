@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 public class Log {
-	static public boolean redirectOutputToFile = false;
 	static boolean logToFile = false;
 	static File file = null;
 	static BufferedWriter bw = null;
@@ -27,15 +26,14 @@ public class Log {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if(redirectOutputToFile) {
-			try {
-				System.setErr(new PrintStream(file));
-				System.setOut(new PrintStream(file));
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+				PrintStream ps = new PrintStream(new OutputStream() {
+					@Override
+					public void write(int b) throws IOException {
+						Log.output((char)b);
+					}
+				});
+				System.setErr(ps);
+				System.setOut(ps);
 	}
 	
 	
@@ -43,20 +41,34 @@ public class Log {
 		Log.output(input);
 	}
 	
+	public static void println (String input) {
+		Log.output(input + "\n");
+	}
+	
 	public static void printf (String format, Object ...objects) {
 		Log.output(String.format(format, objects));
 	}
 	
-	
-	static void output (String out) {
+	static void output (char out) {
 		if(logToFile) {
 			try {
-				bw.append("[" + System.currentTimeMillis() + "] " + out.subSequence(0, out.length()) + "\n");
+				bw.append(out);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		stdSystemOut.println("[" + System.currentTimeMillis() + "] " + out);
+		stdSystemOut.print(out);
+	}
+	
+	static void output (String out) {
+		if(logToFile) {
+			try {
+				bw.append("[" + System.currentTimeMillis() + "] " + out.subSequence(0, out.length()));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		stdSystemOut.print("[" + System.currentTimeMillis() + "] " + out);
 	}
 	
 	public static void close () {
