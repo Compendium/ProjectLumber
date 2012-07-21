@@ -9,6 +9,8 @@ import org.lwjgl.util.vector.Vector3f;
 
 import oz.wizards.lumber.gfx.Shader;
 import oz.wizards.lumber.gfx.Texture;
+import oz.wizards.lumber.io.Log;
+import oz.wizards.lumber.math.SimplexNoise;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.*;
@@ -25,7 +27,7 @@ public class Level {
 	public static final byte FOREST = 3;
 	public static final byte FOREST_DESTROYED = 4;
 
-	public static int dim = 512;
+	public static int dim = 80;
 	private byte[] level = new byte[dim * dim];
 	private byte[] data = new byte[dim * dim];
 
@@ -152,6 +154,47 @@ public class Level {
 		buffer.put(index + 3, uv.x);
 		buffer.put(index + 4, uv.y);
 	}
+	
+	private float interpolate(double a, double b, double x) {
+		float ft = (float) (x * Math.PI);
+		float f = (float) ((1-Math.cos(ft)) * .5f);
+		return (float) (a*(1-f)+b*f);
+	}
+	
+	private float interpolatedNoise(float x, float y) {
+		int integer_X    = (int)(x);
+		float fractional_X = x - integer_X;
+
+		int integer_Y    = (int)(y);
+		float fractional_Y = y - integer_Y;
+
+		float v1 = SimplexNoise.noise(integer_X,     integer_Y);
+		float v2 = SimplexNoise.noise(integer_X + 1, integer_Y);
+		float v3 = SimplexNoise.noise(integer_X,     integer_Y + 1);
+		float v4 = SimplexNoise.noise(integer_X + 1, integer_Y + 1);
+
+		float i1 = interpolate(v1 , v2 , fractional_X);
+		float i2 = interpolate(v3 , v4 , fractional_X);
+
+		return interpolate(i1 , i2 , fractional_Y);
+	}
+	
+	private float noise(float x, float y) {
+		float total = 0;
+		
+		float frequency = .015f * 4;
+		float amplitude = 2.0f;
+		total = (float) (total + interpolatedNoise(x * frequency, y * frequency) * amplitude);
+		
+		frequency = .2f;
+		amplitude = .6f;
+		total = (float) (total + interpolatedNoise(x * frequency, y * frequency) * amplitude);
+		
+		frequency = 1.f;
+		amplitude = .1f;
+		total = (float) (total + interpolatedNoise(x * frequency, y * frequency) * amplitude);
+		return total;
+	}
 
 	public void init(Shader s, Texture tex) {
 		shader = s;
@@ -168,10 +211,11 @@ public class Level {
 
 		for (int x = 0; x < dim; x++)
 			for (int y = 0; y < dim; y++) {
-				if (Math.random() > 0.285) {
+				//float noise = (float) SimplexNoise.noise(x, y);
+				float noise = noise(x,y);
+				Log.print("noise(" + x + ", " + y + ") = " + noise);
+				if (noise > 0.65) {
 					set(x, y, Level.FOREST);
-				} else if (Math.random() < 0.4) {
-					set(x, y, Level.VILLAGE);
 				} else {
 					set(x, y, Level.NOTHING);
 				}
