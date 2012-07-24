@@ -13,9 +13,11 @@ public class Log {
 	static File file = null;
 	static BufferedWriter bw = null;
 	static private PrintStream stdSystemOut = null;
+	static {
+		stdSystemOut = System.out;
+	}
 	
 	public static void enableFileOutput (String logName) {
-		stdSystemOut = System.out;
 		file = new File("./" + logName + System.currentTimeMillis() + ".log");
 		
 		try {

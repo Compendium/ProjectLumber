@@ -191,7 +191,7 @@ public class Level {
 		total = (float) (total + interpolatedNoise(x * frequency, y * frequency) * amplitude);
 		
 		frequency = 1.f;
-		amplitude = .1f;
+		amplitude = .8f;
 		total = (float) (total + interpolatedNoise(x * frequency, y * frequency) * amplitude);
 		return total;
 	}
@@ -213,9 +213,10 @@ public class Level {
 			for (int y = 0; y < dim; y++) {
 				//float noise = (float) SimplexNoise.noise(x, y);
 				float noise = noise(x,y);
-				Log.print("noise(" + x + ", " + y + ") = " + noise);
-				if (noise > 0.65) {
+				if (noise > 0.25) {
 					set(x, y, Level.FOREST);
+				} else if (noise < 0.05) {
+					set(x,y, Level.VILLAGE);
 				} else {
 					set(x, y, Level.NOTHING);
 				}

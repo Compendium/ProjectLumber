@@ -41,7 +41,6 @@ public class Game implements Runnable {
 
 	Texture tex;
 	Texture fontset;
-	Texture tree;
 	VertexBatch vbBackground;
 	VertexBatch vbInterface;
 	VertexBatch vbFont;
@@ -92,7 +91,7 @@ public class Game implements Runnable {
 			deltaTime = System.nanoTime() - deltaTime;
 			if (lastPrinted < System.nanoTime()) {
 				lastPrinted = System.nanoTime() + 5L * 1000000000L;
-				Log.printf("Delta Time: %f ms, using %d/%d MB of Memory\n", ((double) deltaTime / 1000000.0), Runtime.getRuntime().totalMemory() / 1024 / 1024, Runtime.getRuntime().maxMemory() / 1024 / 1024);
+				Log.printf("Delta Time: %f ms, using %d/ MB of Memory\n", ((double) deltaTime / 1000000.0), Runtime.getRuntime().totalMemory() / 1024 / 1024);
 			}
 		}
 		Display.destroy();
@@ -471,7 +470,6 @@ public class Game implements Runnable {
 			try {
 				tex = new Texture("res/tiles.png");
 				fontset = new Texture("res/font.png");
-				tree = new Texture("res/tree.png");
 				System.out.println(tex.getPixel(0,0));
 			} catch (IOException e) {
 				e.printStackTrace();
